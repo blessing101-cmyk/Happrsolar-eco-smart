@@ -107,6 +107,21 @@
     font-size:13px;
     margin:0;
   }
+  .live-stats{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+    padding:6px 14px;
+    background:rgba(255,255,255,.75);
+    border:1px solid var(--card-line);
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+    box-shadow:0 6px 18px -10px rgba(18,35,24,.25);
+  }
+  .stat-dot{color:var(--ink-dim);}
 
   /* ===== SCENE ===== */
   .scene{
@@ -718,6 +733,11 @@
     <h1><span>HAPPYSOLAR</span> ECO SMART</h1>
     <p class="tagline">"เรามอบความคุ้มค่า เพื่อคุณ เพื่อโลกของเรา"</p>
     <p class="sub">คุมเครื่องใช้ไฟฟ้าให้พลังงานจากแดดพอใช้ ก่อนที่แบตจะหมดแล้วต้องซื้อไฟจากการไฟฟ้า</p>
+    <div class="live-stats" id="live-stats">
+      <span id="stat-visits">👀 กำลังนับ...</span>
+      <span class="stat-dot">·</span>
+      <span id="stat-signups">🌱 กำลังนับ...</span>
+    </div>
   </header>
 
   <div class="scene" id="scene">
@@ -928,22 +948,22 @@
       <textarea id="signup-message" class="signup-message" readonly rows="8"></textarea>
       <div class="result-actions">
         <button id="copy-msg-btn" class="mini-btn" type="button">📋 คัดลอกอีกครั้ง</button>
-        <a id="open-line-btn" class="mini-btn line-btn" href="https://line.me/ti/p/~Happysolar01" target="_blank" rel="noopener">💬 เปิด LINE ส่งข้อความ</a>
+        <a id="open-line-btn" class="mini-btn line-btn" href="https://line.me/R/ti/p/@224jrjso" target="_blank" rel="noopener">💬 เปิด LINE ส่งข้อความ</a>
       </div>
-      <p class="signup-fineprint">ข้อความถูกคัดลอกไว้ในคลิปบอร์ดให้แล้วอัตโนมัติ — ขั้นตอนที่ 3: กดเปิด LINE แล้ววาง (Paste) ส่งหา Happysolar01 ได้เลย</p>
+      <p class="signup-fineprint">ข้อความถูกคัดลอกไว้ในคลิปบอร์ดให้แล้วอัตโนมัติ — ขั้นตอนที่ 3: กดเปิด LINE แล้ววาง (Paste) ส่งหา HAPPYSOLAR ได้เลย</p>
     </div>
   </div>
 
-  <div class="contact-banner">
+  <a class="contact-banner" href="https://line.me/R/ti/p/@224jrjso" target="_blank" rel="noopener" style="text-decoration:none;">
     <div class="contact-icon">
       <svg viewBox="0 0 32 32" width="26" height="26"><path fill="#fff" d="M16 3C8.3 3 2 8.1 2 14.4c0 5.6 5 10.3 11.7 11.2.5.1 1.1.3 1.3.7.2.4.1 1 .1 1.4l-.2 1.3c-.1.4-.3 1.5 1.3.8 1.6-.7 8.6-5.1 11.7-8.7C29.9 18.7 30 16.6 30 14.4 30 8.1 23.7 3 16 3zm-6.4 13.9H7.1a.5.5 0 0 1-.5-.5v-5.6c0-.3.2-.5.5-.5s.5.2.5.5v5.1h2c.3 0 .5.2.5.5s-.2.5-.5.5zm2.7-.5c0 .3-.2.5-.5.5s-.5-.2-.5-.5v-5.6c0-.3.2-.5.5-.5s.5.2.5.5v5.6zm6.4 0c0 .2-.1.4-.4.5h-.2c-.2 0-.3-.1-.4-.2l-2.6-3.5v3.2c0 .3-.2.5-.5.5s-.5-.2-.5-.5v-5.6c0-.2.1-.4.4-.5h.1c.2 0 .3.1.4.2l2.6 3.5v-3.2c0-.3.2-.5.5-.5s.5.2.5.5v5.6zm4.5-3.3c.3 0 .5.2.5.5s-.2.5-.5.5h-2v1.3h2c.3 0 .5.2.5.5s-.2.5-.5.5h-2.5a.5.5 0 0 1-.5-.5v-5.6c0-.3.2-.5.5-.5H23c.3 0 .5.2.5.5s-.2.5-.5.5h-2v1.3h2z"/></svg>
     </div>
     <div class="contact-text">
       <div class="contact-title">สนใจติดตั้งโซล่าเซลล์?</div>
-      <div class="contact-sub">ทักไลน์สอบถามได้เลย</div>
+      <div class="contact-sub">แตะเพื่อแอด LINE OA ได้เลย</div>
     </div>
-    <div class="contact-id">LINE ID: <b>Happysolar01</b></div>
-  </div>
+    <div class="contact-id">แอดไลน์ <b>HAPPYSOLAR</b> →</div>
+  </a>
 </div>
 
 <script>
@@ -1460,6 +1480,7 @@
       suNote.textContent = '✓ ส่งข้อมูลถึงทีมงาน HAPPYSOLAR เรียบร้อยแล้ว ไม่ต้องทำอะไรเพิ่ม';
       suNote.className = 'signup-note ok';
       if(stepTagEl) stepTagEl.textContent = '✓ ส่งสำเร็จอัตโนมัติ — ข้อความสำรองด้านล่าง (เผื่อไว้)';
+      bumpSignupStat();
     } else {
       if(stepTagEl) stepTagEl.textContent = 'ขั้นตอนที่ 2 — ข้อความถูกสร้างแล้ว (คัดลอกไว้ให้อัตโนมัติ) ↓';
       const copied = await copyMessageToClipboard();
@@ -1480,6 +1501,39 @@
       setTimeout(()=>{ copyBtn.textContent = '📋 คัดลอกอีกครั้ง'; }, 1800);
     }
   });
+
+  // ===== live visitor / signup counter =====
+  const STATS_NAMESPACE = 'happysolar-ecosmart-v1';
+  const statVisitsEl = $('stat-visits');
+  const statSignupsEl = $('stat-signups');
+
+  async function initLiveStats(){
+    try{
+      const visitRes = await fetch(`https://api.countapi.xyz/hit/${STATS_NAMESPACE}/visits`);
+      const visitData = await visitRes.json();
+      statVisitsEl.textContent = '👀 เข้าชมแล้ว ' + visitData.value.toLocaleString('th-TH') + ' ครั้ง';
+    }catch(err){
+      statVisitsEl.textContent = '👀 เข้าชมแล้วหลายครั้ง';
+    }
+    try{
+      const suRes = await fetch(`https://api.countapi.xyz/get/${STATS_NAMESPACE}/signups`);
+      const suData = await suRes.json();
+      const n = (suData && typeof suData.value === 'number') ? suData.value : 0;
+      statSignupsEl.textContent = '🌱 ลงทะเบียนแล้ว ' + n.toLocaleString('th-TH') + ' ราย';
+    }catch(err){
+      statSignupsEl.textContent = '🌱 ลงทะเบียนแล้วหลายราย';
+    }
+  }
+
+  async function bumpSignupStat(){
+    try{
+      const res = await fetch(`https://api.countapi.xyz/hit/${STATS_NAMESPACE}/signups`);
+      const data = await res.json();
+      statSignupsEl.textContent = '🌱 ลงทะเบียนแล้ว ' + data.value.toLocaleString('th-TH') + ' ราย';
+    }catch(err){ /* non-critical, ignore */ }
+  }
+
+  initLiveStats();
 
   updateScene();
   setInterval(tick, TICK_MS);
