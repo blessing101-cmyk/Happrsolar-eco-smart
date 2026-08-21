@@ -250,19 +250,27 @@
   .clock{
     position:absolute;top:10px;left:10px;
     font-family:'JetBrains Mono',monospace;
-    font-size:13px;
-    background:rgba(10,14,20,.55);
-    padding:5px 10px;
-    border-radius:8px;
-    letter-spacing:.5px;
+    font-size:22px;
+    font-weight:700;
+    color:#fff;
+    background:rgba(8,12,18,.72);
+    padding:7px 16px;
+    border-radius:10px;
+    letter-spacing:1px;
+    border:1px solid rgba(255,255,255,.18);
+    box-shadow:0 0 16px rgba(255,182,39,.35), 0 6px 14px rgba(0,0,0,.35);
+    text-shadow:0 0 8px rgba(255,182,39,.5);
   }
   .dayn{
-    position:absolute;top:10px;right:10px;
+    position:absolute;top:12px;right:10px;
     font-family:'JetBrains Mono',monospace;
-    font-size:11px;
-    background:rgba(10,14,20,.55);
-    padding:5px 10px;
-    border-radius:8px;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    background:rgba(8,12,18,.72);
+    padding:6px 12px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.14);
   }
 
   /* ===== DASH / LCD READOUT ===== */
@@ -1192,8 +1200,8 @@
       $('cancel-add').addEventListener('click',()=>{ addFormOpen=false; renderAppliances(); });
       $('new-name').focus();
     }
+    saveState();
   }
-  renderAppliances();
 
   // stars field
   const starsEl = $('stars');
@@ -1287,15 +1295,16 @@
   }
   positionLabels();
 
-  function tick(){
-    if(speed===0){ return; }
-    simMin += SIM_MIN_PER_TICK*speed;
-    if(simMin>=1440){
+  function advanceByMinutes(deltaMin, silent){
+    simMin += deltaMin;
+    while(simMin>=1440){
       simMin -= 1440;
       day+=1;
-      const pct = dayLoadTotal>0? Math.round(100*daySolarServed/dayLoadTotal):100;
-      $('summarytext').innerHTML = `พึ่งพาตัวเองได้ <b>${pct}%</b> ของไฟที่ใช้ทั้งวัน — ประหยัด/ขายไฟสะสมรวม <b>฿${saved.toFixed(0)}</b>, จ่ายค่าไฟกริดสะสมรวม <b>฿${cost.toFixed(0)}</b>`;
-      $('summary').classList.add('show');
+      if(!silent){
+        const pct = dayLoadTotal>0? Math.round(100*daySolarServed/dayLoadTotal):100;
+        $('summarytext').innerHTML = `พึ่งพาตัวเองได้ <b>${pct}%</b> ของไฟที่ใช้ทั้งวัน — ประหยัด/ขายไฟสะสมรวม <b>฿${saved.toFixed(0)}</b>, จ่ายค่าไฟกริดสะสมรวม <b>฿${cost.toFixed(0)}</b>`;
+        $('summary').classList.add('show');
+      }
       daySolarServed=0; dayLoadTotal=0;
     }
 
@@ -1304,13 +1313,12 @@
     const loadW = appliances.reduce((s,a)=>s+(applianceIsOn(a,simMin)?a.watt*a.qty:0),0);
     lastGenW=genW; lastLoadW=loadW;
 
-    const dtH = (SIM_MIN_PER_TICK*speed)/60;
+    const dtH = deltaMin/60;
     let net = genW - loadW;
     let battFlowW=0, gridFlowW=0, gridMode='buy';
 
     if(net>0){
       const room = BATT_CAP - battery;
-      const chargeW = Math.min(net, room/Math.max(dtH,0.0001));
       const chargeWh = Math.min(net*dtH, room);
       battery += chargeWh;
       battFlowW = chargeWh/Math.max(dtH,0.0001);
@@ -1338,6 +1346,15 @@
     daySolarServed += solarServedW*dtH;
     dayLoadTotal += loadW*dtH;
 
+    return {genW, loadW, battFlowW, gridFlowW, gridMode, net};
+  }
+
+  let tickCounter = 0;
+
+  function tick(){
+    if(speed===0){ saveStateThrottled(); return; }
+    const {genW, loadW, battFlowW, gridFlowW, gridMode, net} = advanceByMinutes(SIM_MIN_PER_TICK*speed, false);
+
     // ---- render ----
     $('d-gen').textContent = Math.round(genW)+' W';
     $('d-load').textContent = Math.round(loadW)+' W';
@@ -1360,6 +1377,9 @@
 
     updateScene();
     refreshApplianceStatuses();
+
+    tickCounter++;
+    if(tickCounter % 10 === 0) saveState();
   }
 
   function refreshApplianceStatuses(){
@@ -1380,6 +1400,7 @@
 
   $('sel-panel').addEventListener('change', e=>{
     PEAK_W = Number(e.target.value);
+    saveState();
   });
 
   $('sel-batt').addEventListener('change', e=>{
@@ -1387,6 +1408,7 @@
     const pct = BATT_CAP>0 ? battery/BATT_CAP : 0;
     BATT_CAP = newCap;
     battery = BATT_CAP>0 ? pct*BATT_CAP : 0;
+    saveState();
   });
 
   $('speedbtns').addEventListener('click',e=>{
@@ -1394,6 +1416,7 @@
     if(!btn) return;
     speed = Number(btn.dataset.s);
     [...$('speedbtns').children].forEach(b=>b.classList.toggle('active', b===btn));
+    saveState();
   });
 
   $('resetbtn').addEventListener('click',()=>{
@@ -1402,6 +1425,7 @@
     $('summary').classList.remove('show');
     appliances.forEach(a=>{ if(!a.locked) a.on=false; });
     renderAppliances();
+    saveState();
   });
 
   // ===== free-trial signup: generate LINE message =====
@@ -1571,6 +1595,87 @@
   }
 
   initLiveStats();
+
+  // ===== persistence: keep the simulation running across close/reopen =====
+  const STORAGE_KEY = 'happysolar_ecosmart_state_v1';
+
+  function saveState(){
+    try{
+      const state = {
+        simMin, day, speed, battery, saved, cost,
+        daySolarServed, dayLoadTotal, PEAK_W, BATT_CAP,
+        appliances: appliances.map(a=>({
+          id:a.id, name:a.name, icon:a.icon, watt:a.watt, qty:a.qty,
+          on:a.on, ranges:a.ranges||[], custom:!!a.custom, locked:!!a.locked
+        })),
+        savedAt: Date.now()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(err){ /* storage unavailable, ignore */ }
+  }
+
+  let saveThrottleTimer = null;
+  function saveStateThrottled(){
+    if(saveThrottleTimer) return;
+    saveThrottleTimer = setTimeout(()=>{ saveState(); saveThrottleTimer=null; }, 2000);
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch(err){ return null; }
+  }
+
+  function fastForward(totalMinutes){
+    const CHUNK = 20;
+    const MAX_MINUTES = 20160; // cap catch-up at ~14 in-game days worth of detail
+    let remaining = Math.min(totalMinutes, MAX_MINUTES);
+    while(remaining>0){
+      const step = Math.min(CHUNK, remaining);
+      advanceByMinutes(step, true);
+      remaining -= step;
+    }
+  }
+
+  (function restoreState(){
+    const st = loadState();
+    if(st){
+      simMin = st.simMin ?? simMin;
+      day = st.day ?? day;
+      speed = st.speed ?? speed;
+      battery = st.battery ?? battery;
+      saved = st.saved ?? saved;
+      cost = st.cost ?? cost;
+      daySolarServed = st.daySolarServed ?? daySolarServed;
+      dayLoadTotal = st.dayLoadTotal ?? dayLoadTotal;
+      if(st.PEAK_W) PEAK_W = st.PEAK_W;
+      if(st.BATT_CAP) BATT_CAP = st.BATT_CAP;
+      if(Array.isArray(st.appliances) && st.appliances.length){
+        appliances.length = 0;
+        st.appliances.forEach(a=> appliances.push(Object.assign({}, a, {ranges: a.ranges||[]})));
+      }
+
+      const selPanel = $('sel-panel'); if(selPanel) selPanel.value = String(PEAK_W);
+      const selBatt = $('sel-batt'); if(selBatt) selBatt.value = String(BATT_CAP);
+      const speedBtn = document.querySelector(`#speedbtns button[data-s="${speed}"]`);
+      if(speedBtn){ [...$('speedbtns').children].forEach(b=>b.classList.toggle('active', b===speedBtn)); }
+
+      if(st.savedAt){
+        const elapsedMs = Date.now() - st.savedAt;
+        if(elapsedMs>1000){
+          const effSpeed = speed>0 ? speed : 1; // keep the world moving even if left paused
+          const simMinutesElapsed = elapsedMs * (SIM_MIN_PER_TICK*effSpeed) / TICK_MS;
+          if(simMinutesElapsed>1) fastForward(simMinutesElapsed);
+        }
+      }
+    }
+    renderAppliances();
+  })();
+
+  window.addEventListener('pagehide', saveState);
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden) saveState(); });
 
   updateScene();
   setInterval(tick, TICK_MS);
