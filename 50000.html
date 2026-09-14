@@ -1394,7 +1394,8 @@
 
     setTimeout(()=>{ if(leafletMap) leafletMap.invalidateSize(); }, 200);
   }
-function validateStep(){
+
+  function validateStep(){
     if(wizardStep === 0) return !!formData.usertype && !!formData.baac;
     if(wizardStep === 1) return !!(formData.province && formData.housetype && formData.installarea && formData.meter);
     if(wizardStep === 2) return !!formData.bill;
@@ -1590,4 +1591,5 @@ function validateStep(){
 </script>
 </body>
 </html>
-  
+    
+ 
