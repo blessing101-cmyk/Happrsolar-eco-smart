@@ -7,6 +7,8 @@
 <meta name="description" content="ลงทะเบียนตรวจสอบสิทธิ์สนับสนุนโซลาร์เซลล์ 50,000 บาทต่อครัวเรือน กับ HAPPYSOLAR">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root{
     --ink:#16241C;
@@ -316,6 +318,41 @@
   .unsure-note{
     font-size:12.5px;color:var(--green-deep);background:#F0F8F3;
     border-radius:10px;padding:10px 12px;margin-top:10px;line-height:1.5;
+  }
+
+  .map-box{
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    background:var(--white);
+  }
+  .map-locate-btn{
+    display:block;
+    width:100%;
+    padding:11px;
+    background:var(--green-deep);
+    color:#fff;
+    border:none;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  #location-map{
+    width:100%;
+    height:220px;
+    background:var(--paper-2);
+  }
+  .map-hint{
+    font-size:11.5px;
+    color:var(--muted);
+    padding:8px 12px 0;
+  }
+  .map-coords{
+    font-size:12px;
+    font-weight:600;
+    color:var(--green-deep);
+    padding:6px 12px 12px;
+    font-family:'Space Grotesk',monospace;
   }
 
   .summary-card{
@@ -665,6 +702,14 @@
       f_province: "จังหวัด",
       f_amphoe: "อำเภอ",
       f_tambon: "ตำบล",
+      f_map_label: "ปักหมุดตำแหน่งบ้าน (ไม่บังคับ)",
+      btn_use_gps: "ใช้ตำแหน่งปัจจุบันของฉัน",
+      map_hint: "แตะบนแผนที่หรือลากหมุดเพื่อปรับตำแหน่งให้ตรงบ้านจริง",
+      map_pin_set: "ปักหมุดแล้ว",
+      map_no_pin: "ยังไม่ได้ปักหมุด",
+      geo_unsupported: "อุปกรณ์นี้ไม่รองรับการระบุตำแหน่ง กรุณาปักหมุดบนแผนที่ด้วยตนเอง",
+      geo_locating: "กำลังค้นหาตำแหน่ง...",
+      geo_denied: "ไม่สามารถเข้าถึงตำแหน่งได้ กรุณาอนุญาตการเข้าถึงตำแหน่ง หรือปักหมุดบนแผนที่ด้วยตนเอง",
       q_housetype: "ประเภทที่พัก",
       opt_single: "บ้านเดี่ยว",
       opt_garden: "บ้านสวน",
@@ -794,6 +839,14 @@
       f_province: "Province",
       f_amphoe: "District",
       f_tambon: "Sub-district",
+      f_map_label: "Pin your home location (optional)",
+      btn_use_gps: "Use my current location",
+      map_hint: "Tap the map or drag the pin to match your exact home",
+      map_pin_set: "Pin set",
+      map_no_pin: "No pin set yet",
+      geo_unsupported: "This device doesn't support location detection. Please place the pin manually.",
+      geo_locating: "Locating...",
+      geo_denied: "Couldn't access your location. Please allow location access, or place the pin manually.",
       q_housetype: "Type of residence",
       opt_single: "Detached house",
       opt_garden: "Garden home",
@@ -923,6 +976,14 @@
       f_province: "府（省）",
       f_amphoe: "县",
       f_tambon: "乡",
+      f_map_label: "标记您家的位置（可选）",
+      btn_use_gps: "使用我的当前位置",
+      map_hint: "点击地图或拖动标记以对准您家的确切位置",
+      map_pin_set: "已标记",
+      map_no_pin: "尚未标记位置",
+      geo_unsupported: "此设备不支持定位功能，请手动在地图上标记。",
+      geo_locating: "正在定位...",
+      geo_denied: "无法获取您的位置，请允许定位权限，或手动在地图上标记。",
       q_housetype: "住宅类型",
       opt_single: "独栋住宅",
       opt_garden: "园林住宅",
@@ -1121,6 +1182,15 @@
       html += `<div class="field"><label>${t('f_province')}</label><input type="text" id="f-province" value="${formData.province||''}"></div>`;
       html += `<div class="field"><label>${t('f_amphoe')}</label><input type="text" id="f-amphoe" value="${formData.amphoe||''}"></div>`;
       html += `<div class="field"><label>${t('f_tambon')}</label><input type="text" id="f-tambon" value="${formData.tambon||''}"></div>`;
+      html += `<div class="field">
+        <label>${t('f_map_label')}</label>
+        <div class="map-box">
+          <button type="button" class="map-locate-btn" id="map-locate-btn">📍 ${t('btn_use_gps')}</button>
+          <div id="location-map"></div>
+          <div class="map-hint">${t('map_hint')}</div>
+          <div class="map-coords" id="map-coords">${formData.lat ? t('map_pin_set')+': '+Number(formData.lat).toFixed(5)+', '+Number(formData.lng).toFixed(5) : t('map_no_pin')}</div>
+        </div>
+      </div>`;
       html += `<div class="field"><label>${t('q_housetype')}</label><div class="opt-group">`;
       html += optCardHTML('housetype','single',t('opt_single'),false);
       html += optCardHTML('housetype','garden',t('opt_garden'),false);
@@ -1209,7 +1279,92 @@
       if(el){ el.addEventListener('change', ()=>{ formData[id] = el.checked; }); }
     });
 
+    if(wizardStep === 1){ initLocationMap(); }
+
     $('wizard-next').textContent = (wizardStep === TOTAL_STEPS-1) ? t('wizard_submit') : t('wizard_next');
+  }
+
+  // ============ LOCATION MAP (free, no API key — Leaflet + OpenStreetMap) ============
+  let leafletMap = null;
+  let leafletMarker = null;
+  const DEFAULT_LATLNG = [13.7563, 100.5018]; // Bangkok, used only as a fallback starting view
+
+  function setPinCoords(lat, lng){
+    formData.lat = lat;
+    formData.lng = lng;
+    const coordsEl = document.getElementById('map-coords');
+    if(coordsEl) coordsEl.textContent = t('map_pin_set') + ': ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+  }
+
+  function initLocationMap(){
+    const mapEl = document.getElementById('location-map');
+    if(!mapEl || typeof L === 'undefined') return;
+
+    const startLatLng = (formData.lat && formData.lng) ? [formData.lat, formData.lng] : DEFAULT_LATLNG;
+    const startZoom = (formData.lat && formData.lng) ? 16 : 6;
+
+    leafletMap = L.map(mapEl, { attributionControl:true }).setView(startLatLng, startZoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(leafletMap);
+
+    if(formData.lat && formData.lng){
+      leafletMarker = L.marker(startLatLng, { draggable:true }).addTo(leafletMap);
+      leafletMarker.on('dragend', ()=>{
+        const pos = leafletMarker.getLatLng();
+        setPinCoords(pos.lat, pos.lng);
+      });
+    }
+
+    leafletMap.on('click', (e)=>{
+      const { lat, lng } = e.latlng;
+      if(leafletMarker){
+        leafletMarker.setLatLng([lat, lng]);
+      } else {
+        leafletMarker = L.marker([lat, lng], { draggable:true }).addTo(leafletMap);
+        leafletMarker.on('dragend', ()=>{
+          const pos = leafletMarker.getLatLng();
+          setPinCoords(pos.lat, pos.lng);
+        });
+      }
+      setPinCoords(lat, lng);
+    });
+
+    const locateBtn = document.getElementById('map-locate-btn');
+    if(locateBtn){
+      locateBtn.addEventListener('click', ()=>{
+        if(!navigator.geolocation){
+          alert(t('geo_unsupported'));
+          return;
+        }
+        locateBtn.textContent = '📍 ' + t('geo_locating');
+        navigator.geolocation.getCurrentPosition(
+          (pos)=>{
+            const { latitude, longitude } = pos.coords;
+            leafletMap.setView([latitude, longitude], 17);
+            if(leafletMarker){
+              leafletMarker.setLatLng([latitude, longitude]);
+            } else {
+              leafletMarker = L.marker([latitude, longitude], { draggable:true }).addTo(leafletMap);
+              leafletMarker.on('dragend', ()=>{
+                const p = leafletMarker.getLatLng();
+                setPinCoords(p.lat, p.lng);
+              });
+            }
+            setPinCoords(latitude, longitude);
+            locateBtn.textContent = '📍 ' + t('btn_use_gps');
+          },
+          ()=>{
+            alert(t('geo_denied'));
+            locateBtn.textContent = '📍 ' + t('btn_use_gps');
+          },
+          { enableHighAccuracy:true, timeout:10000 }
+        );
+      });
+    }
+
+    setTimeout(()=>{ if(leafletMap) leafletMap.invalidateSize(); }, 200);
   }
 
   function validateStep(){
@@ -1271,7 +1426,10 @@
       bill: formData.bill || '',
       purpose: (formData.purpose||[]).join(', '),
       contactpref: formData.contactpref || '',
-      baac: formData.baac || ''
+      baac: formData.baac || '',
+      lat: formData.lat || '',
+      lng: formData.lng || '',
+      mapLink: (formData.lat && formData.lng) ? ('https://www.google.com/maps?q=' + formData.lat + ',' + formData.lng) : ''
     };
     try{
       await fetch('/', {
@@ -1294,6 +1452,9 @@
       'จังหวัด: ' + (formData.province || '-'),
       'ค่าไฟ: ' + (billMap[formData.bill] || '-')
     ];
+    if(formData.lat && formData.lng){
+      lines.push('พิกัดบ้าน: https://www.google.com/maps?q=' + formData.lat + ',' + formData.lng);
+    }
     try{
       await fetch('/.netlify/functions/notify', {
         method: 'POST',

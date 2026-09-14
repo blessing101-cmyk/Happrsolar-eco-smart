@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAPPYSOLAR 50,000 — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16241C;
+    --paper:#FBF9F4;
+    --paper-2:#F1EEE4;
+    --gold:#E8A93D;
+    --energy:#C6631B;
+    --green:#1F7A4D;
+    --green-deep:#123D28;
+    --line:#E2DCCB;
+    --muted:#6B7568;
+    --white:#FFFFFF;
+    --red:#B23A2E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans Thai','Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:18px 16px 60px;}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:19px;margin:0 0 4px;}
+  .sub{font-size:12.5px;color:var(--muted);margin:0 0 20px;}
+
+  /* ===== LOGIN ===== */
+  .login-box{
+    max-width:340px;margin:60px auto 0;background:var(--white);
+    border:1px solid var(--line);border-radius:16px;padding:24px 20px;text-align:center;
+  }
+  .login-box .lock{font-size:30px;margin-bottom:8px;}
+  .login-box input{
+    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;
+    font-size:14px;margin:14px 0 10px;text-align:center;
+  }
+  .login-box button{
+    width:100%;padding:12px;border:none;border-radius:10px;
+    background:var(--green-deep);color:#fff;font-weight:700;font-size:14px;cursor:pointer;
+  }
+  .login-err{color:var(--red);font-size:12.5px;margin-top:8px;display:none;}
+
+  /* ===== DASHBOARD ===== */
+  .hidden{display:none !important;}
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;
+  }
+  .toolbar input[type=text]{
+    flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--line);
+    border-radius:10px;font-size:13.5px;
+  }
+  .btn{
+    padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);
+    background:var(--white);color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .btn.primary{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
+  .btn.energy{background:var(--energy);color:#fff;border-color:var(--energy);}
+
+  .stat-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .stat-card{
+    background:var(--white);border:1px solid var(--line);border-radius:12px;
+    padding:12px 16px;min-width:120px;
+  }
+  .stat-card .n{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--energy);}
+  .stat-card .l{font-size:11.5px;color:var(--muted);}
+
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--white);}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:820px;}
+  th{
+    text-align:left;background:var(--paper-2);color:var(--muted);
+    font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+    padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .pill{
+    display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;
+    background:#F0F8F3;color:var(--green-deep);
+  }
+  .empty-note{padding:30px;text-align:center;color:var(--muted);font-size:13.5px;}
+  .status-msg{font-size:12.5px;color:var(--muted);margin-bottom:10px;}
+  .status-msg.err{color:var(--red);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>☀️ HAPPYSOLAR 50,000 — Admin</h1>
+  <p class="sub">รายชื่อผู้ลงทะเบียนขอตรวจสอบสิทธิ์ (ข้อมูลจาก Netlify Forms)</p>
+
+  <div class="login-box" id="login-box">
+    <div class="lock">🔒</div>
+    <div>ใส่รหัสผ่าน Admin</div>
+    <input type="password" id="admin-password" placeholder="รหัสผ่าน">
+    <button id="btn-login">เข้าสู่ระบบ</button>
+    <div class="login-err" id="login-err">รหัสผ่านไม่ถูกต้อง หรือเชื่อมต่อไม่สำเร็จ</div>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <div class="stat-row">
+      <div class="stat-card"><div class="n" id="stat-total">0</div><div class="l">ผู้ลงทะเบียนทั้งหมด</div></div>
+      <div class="stat-card"><div class="n" id="stat-today">0</div><div class="l">วันนี้</div></div>
+      <div class="stat-card"><div class="n" id="stat-week">0</div><div class="l">7 วันล่าสุด</div></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="search-box" placeholder="ค้นหาชื่อ / เบอร์โทร / จังหวัด...">
+      <button class="btn" id="btn-refresh">🔄 รีเฟรช</button>
+      <button class="btn energy" id="btn-export">⬇️ Export CSV</button>
+    </div>
+
+    <div class="status-msg" id="status-msg"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>วันที่</th>
+            <th>เลขคำขอ</th>
+            <th>ชื่อ</th>
+            <th>เบอร์โทร</th>
+            <th>จังหวัด</th>
+            <th>ประเภท</th>
+            <th>ค่าไฟ</th>
+            <th>ความสนใจ</th>
+            <th>แผนที่</th>
+          </tr>
+        </thead>
+        <tbody id="leads-tbody"></tbody>
+      </table>
+      <div class="empty-note hidden" id="empty-note">ยังไม่มีผู้ลงทะเบียน</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  let PASSWORD = '';
+  let allLeads = [];
+
+  const TYPE_LABELS = {home:'บ้านอยู่อาศัย',farmer:'เกษตรกร',shop:'ร้านค้า',biz:'ธุรกิจ',other:'อื่นๆ'};
+  const BILL_LABELS = {'1':'< 1,500 บาท','2':'1,500-3,000 บาท','3':'3,000-5,000 บาท','4':'5,000-10,000 บาท','5':'> 10,000 บาท'};
+
+  async function fetchLeads(){
+    $('status-msg').textContent = 'กำลังโหลดข้อมูล...';
+    $('status-msg').className = 'status-msg';
+    try{
+      const res = await fetch('/.netlify/functions/admin-leads', {
+        headers: { 'X-Admin-Password': PASSWORD }
+      });
+      const json = await res.json();
+      if(!res.ok || !json.ok){
+        throw new Error(json.error || ('HTTP ' + res.status));
+      }
+      allLeads = json.submissions || [];
+      $('status-msg').textContent = json.note ? json.note : ('โหลดสำเร็จ — ' + allLeads.length + ' รายการ');
+      renderStats();
+      renderTable(allLeads);
+      return true;
+    }catch(err){
+      $('status-msg').textContent = 'โหลดข้อมูลไม่สำเร็จ: ' + err.message;
+      $('status-msg').className = 'status-msg err';
+      return false;
+    }
+  }
+
+  function renderStats(){
+    $('stat-total').textContent = allLeads.length;
+    const now = new Date();
+    const todayStr = now.toDateString();
+    const weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+    let today = 0, week = 0;
+    allLeads.forEach(l=>{
+      const d = new Date(l.created_at);
+      if(d.toDateString() === todayStr) today++;
+      if(d >= weekAgo) week++;
+    });
+    $('stat-today').textContent = today;
+    $('stat-week').textContent = week;
+  }
+
+  function renderTable(list){
+    const tbody = $('leads-tbody');
+    if(!list.length){
+      tbody.innerHTML = '';
+      $('empty-note').classList.remove('hidden');
+      return;
+    }
+    $('empty-note').classList.add('hidden');
+    tbody.innerHTML = list.map(l=>{
+      const d = l.data || {};
+      const date = l.created_at ? new Date(l.created_at).toLocaleString('th-TH') : '-';
+      const typeLabel = TYPE_LABELS[d.usertype] || d.usertype || '-';
+      const billLabel = BILL_LABELS[d.bill] || '-';
+      return `<tr>
+        <td>${escapeHtml(date)}</td>
+        <td><span class="pill">${escapeHtml(d.appId||'-')}</span></td>
+        <td>${escapeHtml(d.name||'-')}</td>
+        <td>${escapeHtml(d.phone||'-')}</td>
+        <td>${escapeHtml(d.province||'-')}</td>
+        <td>${escapeHtml(typeLabel)}</td>
+        <td>${escapeHtml(billLabel)}</td>
+        <td>${escapeHtml(d.purpose||'-')}</td>
+        <td>${(d.lat && d.lng) ? `<a href="https://www.google.com/maps?q=${d.lat},${d.lng}" target="_blank" rel="noopener">📍 เปิดแผนที่</a>` : '-'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  $('search-box').addEventListener('input', ()=>{
+    const q = $('search-box').value.trim().toLowerCase();
+    if(!q){ renderTable(allLeads); return; }
+    const filtered = allLeads.filter(l=>{
+      const d = l.data || {};
+      return [d.name, d.phone, d.province, d.appId].some(v=> (v||'').toLowerCase().includes(q));
+    });
+    renderTable(filtered);
+  });
+
+  $('btn-refresh').addEventListener('click', fetchLeads);
+
+  $('btn-export').addEventListener('click', ()=>{
+    const rows = [['วันที่','เลขคำขอ','ชื่อ','เบอร์โทร','LINE ID','Email','จังหวัด','อำเภอ','ตำบล','ประเภท','ประเภทบ้าน','ค่าไฟ','ความสนใจ','ช่องทางติดต่อ','ลิงก์แผนที่']];
+    allLeads.forEach(l=>{
+      const d = l.data || {};
+      const mapLink = (d.lat && d.lng) ? ('https://www.google.com/maps?q='+d.lat+','+d.lng) : '';
+      rows.push([
+        l.created_at ? new Date(l.created_at).toLocaleString('th-TH') : '',
+        d.appId||'', d.name||'', d.phone||'', d.lineid||'', d.email||'',
+        d.province||'', d.amphoe||'', d.tambon||'',
+        TYPE_LABELS[d.usertype]||d.usertype||'', d.housetype||'',
+        BILL_LABELS[d.bill]||'', d.purpose||'', d.contactpref||'', mapLink
+      ]);
+    });
+    const csv = rows.map(r=> r.map(cell=>'"'+String(cell).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'happysolar50000-leads.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  $('btn-login').addEventListener('click', async ()=>{
+    PASSWORD = $('admin-password').value;
+    $('login-err').style.display = 'none';
+    const ok = await fetchLeads();
+    if(ok){
+      $('login-box').classList.add('hidden');
+      $('dashboard').classList.remove('hidden');
+      sessionStorage.setItem('happysolar50k_admin_pw', PASSWORD);
+    } else {
+      $('login-err').style.display = 'block';
+    }
+  });
+
+  $('admin-password').addEventListener('keydown', e=>{
+    if(e.key === 'Enter') $('btn-login').click();
+  });
+
+  // auto-login if password already present in this tab's session
+  const saved = sessionStorage.getItem('happysolar50k_admin_pw');
+  if(saved){
+    PASSWORD = saved;
+    fetchLeads().then(ok=>{
+      if(ok){
+        $('login-box').classList.add('hidden');
+        $('dashboard').classList.remove('hidden');
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
