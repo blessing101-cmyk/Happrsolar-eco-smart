@@ -1394,8 +1394,7 @@
 
     setTimeout(()=>{ if(leafletMap) leafletMap.invalidateSize(); }, 200);
   }
-
-  function validateStep(){
+function validateStep(){
     if(wizardStep === 0) return !!formData.usertype && !!formData.baac;
     if(wizardStep === 1) return !!(formData.province && formData.housetype && formData.installarea && formData.meter);
     if(wizardStep === 2) return !!formData.bill;
@@ -1419,6 +1418,10 @@
   });
 
   // ============ SUBMIT / STORAGE ============
+  const urlRef = new URLSearchParams(location.search).get('ref');
+  if(urlRef){ sessionStorage.setItem('happysolar50k_ref', urlRef); }
+  const REF_CODE = urlRef || sessionStorage.getItem('happysolar50k_ref') || '';
+
   function genAppId(){
     const d = new Date();
     const yy = String(d.getFullYear()).slice(2);
@@ -1440,6 +1443,7 @@
     const payload = {
       'form-name': 'happysolar50k',
       appId,
+      ref: REF_CODE,
       name: formData.name || '',
       phone: formData.phone || '',
       lineid: formData.lineid || '',
@@ -1461,7 +1465,32 @@
     };
     try{
       await fetch('/', {
-github.com 
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: encodeFormData(payload)
+      });
+    }catch(err){ /* non-critical: local record + LINE push still happened */ }
+  }
+
+  async function sendLineNotification(appId){
+    const billMap = {1:'< 1,500 บาท',2:'1,500-3,000 บาท',3:'3,000-5,000 บาท',4:'5,000-10,000 บาท',5:'> 10,000 บาท'};
+    const typeMap = {home:'บ้านอยู่อาศัย',farmer:'เกษตรกร',shop:'ร้านค้า',biz:'ธุรกิจ',other:'อื่นๆ'};
+    const lines = [
+      '🔔 มีผู้ลงทะเบียน HAPPYSOLAR 50,000 ใหม่',
+      'เลขคำขอ: ' + appId,
+      'ชื่อ: ' + (formData.name || '-'),
+      'เบอร์โทร: ' + (formData.phone || '-'),
+      'ประเภท: ' + (typeMap[formData.usertype] || formData.usertype || '-'),
+      'จังหวัด: ' + (formData.province || '-'),
+      'ค่าไฟ: ' + (billMap[formData.bill] || '-')
+    ];
+    if(formData.lat && formData.lng){
+      lines.push('พิกัดบ้าน: https://www.google.com/maps?q=' + formData.lat + ',' + formData.lng);
+    }
+    if(REF_CODE){
+      lines.push('👤 ผู้แนะนำ (Sale): ' + REF_CODE);
+    }
+    try{
       await fetch('/.netlify/functions/notify', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'X-Form-Secret': FORM_SHARED_SECRET},
@@ -1561,3 +1590,4 @@ github.com
 </script>
 </body>
 </html>
+  
