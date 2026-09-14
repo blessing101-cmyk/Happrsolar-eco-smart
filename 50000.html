@@ -390,6 +390,14 @@
     margin-top:26px;font-size:12px;color:var(--muted);
     border-top:1px solid var(--line);padding-top:16px;line-height:1.6;
   }
+  .staff-link{
+    display:block;
+    text-align:center;
+    margin-top:14px;
+    font-size:11.5px;
+    color:var(--muted);
+    text-decoration:underline;
+  }
 </style>
 </head>
 <body>
@@ -489,11 +497,16 @@
         <summary data-i18n="faq_q3"></summary>
         <p class="faq-a" data-i18n="faq_a3"></p>
       </details>
+      <details class="faq-item">
+        <summary data-i18n="faq_q4"></summary>
+        <p class="faq-a" data-i18n="faq_a4"></p>
+      </details>
     </section>
 
     <button class="btn-primary sticky-cta" id="btn-cta-bottom" data-i18n="cta_register_full"></button>
 
     <p class="phase2-note" data-i18n="phase2_note"></p>
+    <a class="staff-link" href="/admin.html" data-i18n="staff_link"></a>
   </main>
 
   <!-- ============ SCREEN: WIZARD ============ -->
@@ -594,14 +607,14 @@
   // ============ I18N ============
   const I18N = {
     th: {
-      hero_badge: "โครงการสนับสนุนพลังงานแสงอาทิตย์",
+      hero_badge: "บริการช่วยประสานงานโดย HAPPYSOLAR",
       hero_title: "ร่วมลงทะเบียนตรวจสอบสิทธิ์",
       amount_unit: "บาท / ครัวเรือน*",
-      hero_desc: "HAPPYSOLAR เปิดให้ผู้สนใจลงทะเบียน เพื่อให้ทีมงานช่วยตรวจสอบคุณสมบัติเบื้องต้น และประสานขั้นตอนที่เกี่ยวข้องกับโครงการ",
+      hero_desc: "HAPPYSOLAR เป็นผู้ให้บริการเอกชนด้านโซล่าเซลล์ เปิดให้ผู้สนใจลงทะเบียนแสดงความประสงค์ เพื่อให้ทีมงานของเราช่วยตรวจสอบคุณสมบัติเบื้องต้น ประสานงานตามขั้นตอนของโครงการ และดำเนินการติดตั้งระบบให้เมื่อท่านผ่านเกณฑ์ — เราไม่ใช่หน่วยงานราชการและไม่ใช่ผู้รับลงทะเบียนโดยตรงของภาครัฐ",
       cta_register: "🔥 ลงทะเบียนขอใช้สิทธิ์",
       cta_check: "ตรวจสอบว่าฉันมีคุณสมบัติเบื้องต้นหรือไม่",
       hero_free_note: "ไม่มีค่าใช้จ่ายในการลงทะเบียนเบื้องต้น*",
-      disclaimer_text: "หมายเหตุ: จำนวนเงิน 50,000 บาทเป็นข้อมูลตามแนวทาง/โครงการที่นำมาใช้เป็นข้อมูลเบื้องต้น การได้รับสิทธิ์จริงขึ้นอยู่กับคุณสมบัติ หลักเกณฑ์ จำนวนสิทธิ์ การอนุมัติ และเงื่อนไขของหน่วยงานที่เกี่ยวข้อง HAPPYSOLAR ไม่รับประกันการได้รับสิทธิ์",
+      disclaimer_text: "หมายเหตุ: HAPPYSOLAR เป็นบริษัทเอกชนผู้ให้บริการด้านโซล่าเซลล์ ทำหน้าที่เป็นผู้ช่วยประสานงานเท่านั้น ไม่ใช่หน่วยงานราชการและไม่มีอำนาจอนุมัติหรือรับลงทะเบียนสิทธิ์ตามนโยบายของภาครัฐโดยตรง จำนวนเงิน 50,000 บาทเป็นข้อมูลอ้างอิงตามแนวทางโครงการเบื้องต้น การได้รับสิทธิ์จริงขึ้นอยู่กับคุณสมบัติ หลักเกณฑ์ จำนวนสิทธิ์ การอนุมัติ และเงื่อนไขของหน่วยงานภาครัฐที่เกี่ยวข้องเท่านั้น HAPPYSOLAR ไม่รับประกันการได้รับสิทธิ์",
       journey_title: "ลงทะเบียนง่าย เพียง 4 ขั้นตอน",
       j1_title: "ลงทะเบียน",
       j2_title: "HAPPYSOLAR ตรวจสอบเบื้องต้น",
@@ -621,13 +634,16 @@
       why6: "ติดตามสถานะให้ตลอดกระบวนการ",
       faq_title: "คำถามที่พบบ่อย",
       faq_q1: "ลงทะเบียนแล้วได้รับสิทธิ์ทันทีหรือไม่?",
-      faq_a1: "ยังไม่ใช่ครับ การลงทะเบียนเป็นการขอให้ทีมงานตรวจสอบคุณสมบัติเบื้องต้นก่อน การได้รับสิทธิ์จริงขึ้นอยู่กับหลักเกณฑ์และการอนุมัติของหน่วยงานที่เกี่ยวข้อง",
+      faq_a1: "ยังไม่ใช่ครับ การลงทะเบียนกับ HAPPYSOLAR เป็นการแสดงความสนใจ เพื่อให้ทีมงานของเราช่วยตรวจสอบคุณสมบัติเบื้องต้นและประสานงานให้ การได้รับสิทธิ์จริงขึ้นอยู่กับหลักเกณฑ์และการอนุมัติของหน่วยงานภาครัฐที่เกี่ยวข้องเท่านั้น",
       faq_q2: "ต้องเตรียมเอกสารอะไรตั้งแต่ตอนนี้ไหม?",
       faq_a2: "ไม่จำเป็นต้องเตรียมเอกสารสำคัญตั้งแต่ตอนลงทะเบียน ทีมงานจะแจ้งเอกสารที่ต้องใช้เมื่อถึงขั้นตอนที่เหมาะสม",
       faq_q3: "ใช้เวลานานแค่ไหนกว่าจะรู้ผล?",
       faq_a3: "ขึ้นอยู่กับจำนวนผู้ลงทะเบียนและขั้นตอนของหน่วยงานที่เกี่ยวข้อง ทีมงานจะติดตามและแจ้งความคืบหน้าให้ทราบเป็นระยะ",
+      faq_q4: "HAPPYSOLAR เป็นหน่วยงานของรัฐหรือไม่?",
+      faq_a4: "ไม่ใช่ครับ HAPPYSOLAR เป็นบริษัทเอกชนผู้เชี่ยวชาญด้านโซล่าเซลล์ ทำหน้าที่ช่วยท่านประสานงาน เตรียมข้อมูล ตรวจสอบพื้นที่ และดำเนินการติดตั้งระบบให้เมื่อท่านผ่านเกณฑ์ของภาครัฐ เราไม่ใช่หน่วยงานราชการและไม่มีอำนาจอนุมัติสิทธิ์ใดๆ โดยตรง",
       cta_register_full: "☀️ ลงทะเบียนขอตรวจสอบสิทธิ์ 50,000 บาท",
-      phase2_note: "หมายเหตุสำหรับทีมงาน: ต้นแบบนี้เป็นส่วนหน้าบ้าน (front-end) สำหรับสาธิตขั้นตอนหลักเท่านั้น ยังไม่เชื่อมระบบฐานข้อมูล/ยืนยันตัวตน/แดชบอร์ดแอดมิน-เซลส์ ซึ่งต้องพัฒนาต่อในเฟสถัดไป",
+      phase2_note: "หมายเหตุ: ระบบ Admin/Sales CRM แบบเต็มรูปแบบ (คะแนนลีด, แผนที่จังหวัด, ระบบแนะนำเพื่อน ฯลฯ) ยังไม่ได้พัฒนา — ปัจจุบันข้อมูลผู้ลงทะเบียนถูกเก็บและดูได้เฉพาะทีมงานที่มีรหัสผ่านเท่านั้น",
+      staff_link: "สำหรับเจ้าหน้าที่ HAPPYSOLAR →",
       wizard_next: "ถัดไป",
       wizard_back_word: "ย้อนกลับ",
       wizard_submit: "🔥 ส่งลงทะเบียนขอตรวจสอบสิทธิ์",
@@ -695,7 +711,7 @@
       consent3: "รับทราบว่าการได้รับสิทธิ์ขึ้นอยู่กับหลักเกณฑ์ของโครงการ",
       err_required: "กรุณากรอก/เลือกข้อมูลนี้ก่อนไปต่อ",
       success_title: "ลงทะเบียนเรียบร้อยแล้ว",
-      success_desc: "HAPPYSOLAR ได้รับข้อมูลของคุณแล้ว",
+      success_desc: "ทีมงาน HAPPYSOLAR ได้รับข้อมูลของคุณแล้ว และจะติดต่อกลับเพื่อช่วยดำเนินการต่อให้",
       app_id_label: "หมายเลขคำขอ (Application ID)",
       next_steps_title: "ขั้นตอนต่อไป",
       tl_received: "รับข้อมูลแล้ว",
@@ -720,14 +736,14 @@
       no_app_found: "ยังไม่มีข้อมูลการลงทะเบียน กรุณาลงทะเบียนก่อน"
     },
     en: {
-      hero_badge: "Solar Energy Support Program",
+      hero_badge: "Coordination service by HAPPYSOLAR",
       hero_title: "Register to check your eligibility",
       amount_unit: "THB / household*",
-      hero_desc: "HAPPYSOLAR is now accepting registrations so our team can carry out an initial eligibility check and help coordinate the related program steps for you.",
+      hero_desc: "HAPPYSOLAR is a private solar energy company. We are accepting registrations of interest so our team can carry out an initial eligibility check, coordinate the program steps on your behalf, and handle the installation once you qualify. We are not a government agency and not the official registration body for this program.",
       cta_register: "🔥 Register for the subsidy",
       cta_check: "Check my basic eligibility",
       hero_free_note: "No charge for initial registration*",
-      disclaimer_text: "Note: The amount of 50,000 THB is indicative, based on the program guidelines used as baseline information. Actual eligibility depends on qualification criteria, the number of available slots, approval, and the conditions set by the relevant authorities. HAPPYSOLAR does not guarantee approval.",
+      disclaimer_text: "Note: HAPPYSOLAR is a private solar energy company acting only as a coordination assistant. We are not a government agency and have no authority to approve or officially register anyone for this government policy. The amount of 50,000 THB is indicative, based on the program guidelines used as baseline information. Actual eligibility depends on qualification criteria, the number of available slots, approval, and the conditions set solely by the relevant government authorities. HAPPYSOLAR does not guarantee approval.",
       journey_title: "Easy registration in 4 steps",
       j1_title: "Register",
       j2_title: "HAPPYSOLAR runs an initial check",
@@ -747,13 +763,16 @@
       why6: "We keep you updated throughout the process",
       faq_title: "Frequently asked questions",
       faq_q1: "Does registering guarantee I get the subsidy?",
-      faq_a1: "Not yet — registering only requests an initial eligibility check from our team. Final approval depends on the criteria and decision of the relevant authorities.",
+      faq_a1: "Not yet — registering with HAPPYSOLAR only expresses your interest so our team can run an initial eligibility check and coordinate on your behalf. Final approval depends solely on the criteria and decision of the relevant government authorities.",
       faq_q2: "Do I need to prepare documents right now?",
       faq_a2: "No important documents are required at registration. Our team will let you know what's needed once you reach that stage.",
       faq_q3: "How long until I hear back?",
       faq_a3: "It depends on the number of applicants and the process of the relevant authorities. Our team will follow up and update you along the way.",
+      faq_q4: "Is HAPPYSOLAR a government agency?",
+      faq_a4: "No — HAPPYSOLAR is a private solar energy company. We help coordinate on your behalf, prepare information, arrange a site survey, and handle installation once you qualify under the government\u2019s criteria. We are not a government agency and have no authority to approve any application ourselves.",
       cta_register_full: "☀️ Register to check the 50,000 THB subsidy",
-      phase2_note: "Note to the team: this prototype is a front-end demo of the core flow only. It is not yet connected to a real database, authentication, or the admin/sales dashboards — those are planned for the next phase.",
+      phase2_note: "Note: the full Admin/Sales CRM (lead scoring, province map, referrals, etc.) is not yet built — registration data is currently stored and viewable only by staff with a password.",
+      staff_link: "For HAPPYSOLAR staff →",
       wizard_next: "Next",
       wizard_back_word: "Back",
       wizard_submit: "🔥 Submit my registration",
@@ -821,7 +840,7 @@
       consent3: "I understand that approval depends on the program's criteria",
       err_required: "Please fill in / select this before continuing",
       success_title: "Registration complete",
-      success_desc: "HAPPYSOLAR has received your information",
+      success_desc: "The HAPPYSOLAR team has received your information and will contact you to help move things forward",
       app_id_label: "Application ID",
       next_steps_title: "What happens next",
       tl_received: "Information received",
@@ -846,14 +865,14 @@
       no_app_found: "No registration found yet. Please register first."
     },
     zh: {
-      hero_badge: "太阳能支持计划",
+      hero_badge: "HAPPYSOLAR 协办咨询服务",
       hero_title: "登记以核实您的资格",
       amount_unit: "泰铢 / 每户*",
-      hero_desc: "HAPPYSOLAR 现已开放登记，我们的团队将为您进行初步资格审核，并协助处理与该计划相关的后续流程。",
+      hero_desc: "HAPPYSOLAR 是一家私营太阳能公司。我们现已开放登记，以便团队为您进行初步资格审核、协助处理与该计划相关的后续流程，并在您符合资格后为您安装系统。我们并非政府机构，也不是该政策的官方登记单位。",
       cta_register: "🔥 登记申请补贴",
       cta_check: "检查我的基本资格",
       hero_free_note: "初步登记不收取任何费用*",
-      disclaimer_text: "备注：50,000 泰铢为参考金额，依据计划指引作为初步信息。实际能否获得补贴取决于资格条件、名额、审批结果以及相关部门的规定。HAPPYSOLAR 不保证一定能获得补贴。",
+      disclaimer_text: "备注：HAPPYSOLAR 是一家私营太阳能公司，仅作为协办/咨询方提供协助，并非政府机构，也无权批准或代表政府正式登记任何人。50,000 泰铢为参考金额，依据计划指引作为初步信息。实际能否获得补贴完全取决于相关政府部门规定的资格条件、名额及审批结果。HAPPYSOLAR 不保证一定能获得补贴。",
       journey_title: "简单四步完成登记",
       j1_title: "登记",
       j2_title: "HAPPYSOLAR 进行初步审核",
@@ -873,13 +892,16 @@
       why6: "全程跟进并更新进度",
       faq_title: "常见问题",
       faq_q1: "登记后是否立即获得补贴？",
-      faq_a1: "还不是。登记只是请我们的团队先进行初步资格审核，最终是否获得补贴取决于相关部门的标准和审批结果。",
+      faq_a1: "还不是。在 HAPPYSOLAR 登记仅表示您的兴趣，以便我们的团队为您进行初步资格审核并协助协调，最终是否获得补贴完全取决于相关政府部门的标准和审批结果。",
       faq_q2: "现在需要准备文件吗？",
       faq_a2: "登记阶段无需准备重要文件，团队会在合适的阶段告知您所需材料。",
       faq_q3: "大概多久会有结果？",
       faq_a3: "视登记人数及相关部门的流程而定，团队会持续跟进并适时通知进度。",
+      faq_q4: "HAPPYSOLAR 是政府机构吗？",
+      faq_a4: "不是。HAPPYSOLAR 是一家专业的私营太阳能公司，负责协助您协调事务、准备资料、安排现场勘查，并在您符合政府标准后为您安装系统。我们并非政府机构，也无权直接批准任何申请。",
       cta_register_full: "☀️ 登记核实 50,000 泰铢补贴资格",
-      phase2_note: "团队备注：此原型仅为前端演示核心流程，尚未接入真实数据库、身份验证及管理员/销售后台，这些将在下一阶段开发。",
+      phase2_note: "备注：完整的管理员/销售 CRM 系统（线索评分、省份地图、推荐系统等）尚未开发——目前登记资料仅由持有密码的工作人员储存及查看。",
+      staff_link: "HAPPYSOLAR 工作人员入口 →",
       wizard_next: "下一步",
       wizard_back_word: "返回",
       wizard_submit: "🔥 提交登记申请",
@@ -947,7 +969,7 @@
       consent3: "我知悉能否获批取决于计划的相关标准",
       err_required: "请先填写/选择此项再继续",
       success_title: "登记成功",
-      success_desc: "HAPPYSOLAR 已收到您的信息",
+      success_desc: "HAPPYSOLAR 团队已收到您的信息，将与您联系以协助推进后续事宜",
       app_id_label: "申请编号（Application ID）",
       next_steps_title: "接下来的步骤",
       tl_received: "已收到信息",
