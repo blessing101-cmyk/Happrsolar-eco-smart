@@ -139,32 +139,80 @@
   .lang-toggle:active{transform:scale(.96);}
 
   .subsidy-banner{
-    display:flex;
-    align-items:center;
-    gap:12px;
+    display:block;
+    position:relative;
     max-width:680px;
-    margin:14px auto 0;
-    padding:12px 16px;
-    background:linear-gradient(135deg,#1F7A4D,#123D28);
-    border-radius:16px;
+    margin:16px auto 0;
+    padding:26px 28px 24px;
+    background:linear-gradient(160deg,#1F7A4D 0%,#123D28 78%);
+    border-radius:22px;
     text-decoration:none;
-    box-shadow:0 14px 30px -14px rgba(18,61,40,.6);
-    border:1px solid rgba(255,255,255,.15);
+    overflow:hidden;
+    box-shadow:0 20px 44px -16px rgba(18,61,40,.55);
+    border:1px solid rgba(255,255,255,.14);
     transition:transform .15s ease;
   }
   .subsidy-banner:active{transform:scale(.98);}
+  .subsidy-banner::after{
+    content:"☀";
+    position:absolute;
+    top:-30px; right:-14px;
+    font-size:130px;
+    color:rgba(255,255,255,.06);
+    line-height:1;
+    pointer-events:none;
+  }
+  .subsidy-banner-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
   .subsidy-banner-icon{font-size:26px;flex-shrink:0;}
-  .subsidy-banner-text{flex:1;min-width:0;}
-  .subsidy-banner-title{color:#fff;font-size:12.5px;font-weight:600;opacity:.9;}
+  .subsidy-banner-title{
+    color:rgba(255,255,255,.88);
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.02em;
+    line-height:1.35;
+  }
+  .subsidy-banner-amount-row{
+    display:flex;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:2px 8px;
+    position:relative;
+  }
   .subsidy-banner-amount{
     color:#F5C451;
     font-family:'Space Grotesk','JetBrains Mono',monospace;
-    font-size:19px;
+    font-size:44px;
     font-weight:700;
-    line-height:1.3;
+    line-height:1.1;
+    letter-spacing:-0.01em;
   }
-  .subsidy-banner-amount span{color:#fff;font-size:12px;font-weight:600;margin-left:4px;}
-  .subsidy-banner-arrow{color:#fff;font-size:20px;flex-shrink:0;}
+  .subsidy-banner-unit{
+    color:#fff;
+    font-size:14.5px;
+    font-weight:600;
+    opacity:.9;
+    white-space:nowrap;
+  }
+  .subsidy-banner-cta{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:16px;
+    padding:8px 16px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:20px;
+    color:#fff;
+    font-size:12.5px;
+    font-weight:700;
+    position:relative;
+  }
+  .subsidy-banner-arrow{font-size:14px;}
 
   .promo-banner{
     display:block;
@@ -825,12 +873,17 @@
   </header>
 
   <a class="subsidy-banner" href="/50000.html">
-    <div class="subsidy-banner-icon">🎁</div>
-    <div class="subsidy-banner-text">
-      <div class="subsidy-banner-title" data-i18n="subsidy_banner_title">ตรวจสอบสิทธิ์สนับสนุนโซล่าเซลล์</div>
-      <div class="subsidy-banner-amount">50,000<span data-i18n="subsidy_banner_unit"> บาท/ครัวเรือน*</span></div>
+    <div class="subsidy-banner-head">
+      <span class="subsidy-banner-icon">🎁</span>
+      <span class="subsidy-banner-title" data-i18n="subsidy_banner_title">ตรวจสอบสิทธิ์สนับสนุนโซล่าเซลล์</span>
     </div>
-    <div class="subsidy-banner-arrow">→</div>
+    <div class="subsidy-banner-amount-row">
+      <span class="subsidy-banner-amount">50,000</span>
+      <span class="subsidy-banner-unit" data-i18n="subsidy_banner_unit">บาท/ครัวเรือน*</span>
+    </div>
+    <div class="subsidy-banner-cta">
+      <span data-i18n="subsidy_banner_cta">ดูรายละเอียด</span><span class="subsidy-banner-arrow">→</span>
+    </div>
   </a>
 
   <div class="scene" id="scene">
@@ -1175,7 +1228,7 @@
       opt_size_30: '30 kW — อาคารพาณิชย์', opt_size_50: '50 kW — โรงงานขนาดกลาง', opt_size_100: '100 kW — โรงงานขนาดใหญ่',
       opt_size_200: '200 kW — โซลาร์ฟาร์มเล็ก', opt_size_300: '300 kW — โซลาร์ฟาร์ม', opt_size_500: '500 kW — โซลาร์ฟาร์มใหญ่',
       opt_no_battery: 'ไม่มีแบตเตอรี่',
-      subsidy_banner_title: 'ตรวจสอบสิทธิ์สนับสนุนโซล่าเซลล์', subsidy_banner_unit: ' บาท/ครัวเรือน*',
+      subsidy_banner_title: 'ตรวจสอบสิทธิ์สนับสนุนโซล่าเซลล์', subsidy_banner_unit: 'บาท/ครัวเรือน*', subsidy_banner_cta: 'ดูรายละเอียด',
       visits_counting: '👀 กำลังนับ...', signups_counting: '🌱 กำลังนับ...',
       visits_label: n=>'👀 เข้าชมแล้ว '+n+' ครั้ง', visits_fallback: '👀 เข้าชมแล้วหลายครั้ง',
       signups_label: n=>'🌱 ลงทะเบียนแล้ว '+n+' ราย', signups_fallback: '🌱 ลงทะเบียนแล้วหลายราย',
@@ -1243,7 +1296,7 @@
       opt_size_30: '30 kW — commercial building', opt_size_50: '50 kW — medium factory', opt_size_100: '100 kW — large factory',
       opt_size_200: '200 kW — small solar farm', opt_size_300: '300 kW — solar farm', opt_size_500: '500 kW — large solar farm',
       opt_no_battery: 'No battery',
-      subsidy_banner_title: 'Check your solar subsidy eligibility', subsidy_banner_unit: ' THB/household*',
+      subsidy_banner_title: 'Check your solar subsidy eligibility', subsidy_banner_unit: 'THB/household*', subsidy_banner_cta: 'See details',
       visits_counting: '👀 Counting...', signups_counting: '🌱 Counting...',
       visits_label: n=>'👀 '+n+' visits so far', visits_fallback: '👀 Many visits so far',
       signups_label: n=>'🌱 '+n+' registered so far', signups_fallback: '🌱 Many registered so far',
