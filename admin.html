@@ -7,138 +7,161 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#16241C;
-    --paper:#FBF9F4;
-    --paper-2:#F1EEE4;
-    --gold:#E8A93D;
-    --energy:#C6631B;
-    --green:#1F7A4D;
-    --green-deep:#123D28;
-    --line:#E2DCCB;
-    --muted:#6B7568;
-    --white:#FFFFFF;
-    --red:#B23A2E;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Noto Sans Thai','Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:1000px;margin:0 auto;padding:18px 16px 60px;}
-  h1{font-family:'Space Grotesk',sans-serif;font-size:19px;margin:0 0 4px;}
-  .sub{font-size:12.5px;color:var(--muted);margin:0 0 20px;}
+:root{
+  --ink:#16241C;
+  --paper:#FBF9F4;
+  --paper-2:#F1EEE4;
+  --gold:#E8A93D;
+  --energy:#C6631B;
+  --green:#1F7A4D;
+  --green-deep:#123D28;
+  --line:#E2DCCB;
+  --muted:#6B7568;
+  --white:#FFFFFF;
+  --red:#B23A2E;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Noto Sans Thai','Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:18px 16px 60px;}
+h1{font-family:'Space Grotesk',sans-serif;font-size:19px;margin:0 0 4px;}
+h2{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:0 0 10px;}
+.sub{font-size:12.5px;color:var(--muted);margin:0 0 20px;}
 
-  /* ===== LOGIN ===== */
-  .login-box{
-    max-width:340px;margin:60px auto 0;background:var(--white);
-    border:1px solid var(--line);border-radius:16px;padding:24px 20px;text-align:center;
-  }
-  .login-box .lock{font-size:30px;margin-bottom:8px;}
-  .pw-field{
-    position:relative;
-    margin:14px 0 10px;
-  }
-  .pw-field input{
-    width:100%;padding:12px 44px 12px 14px;border:1.5px solid var(--line);border-radius:10px;
-    font-size:14px;text-align:center;box-sizing:border-box;
-  }
-  .pw-field button{
-    position:absolute;
-    right:6px;
-    top:50%;
-    transform:translateY(-50%);
-    width:32px;height:32px;
-    border:none;background:transparent;
-    font-size:16px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    opacity:.6;
-  }
-  .pw-field button:active{opacity:1;}
-  .login-box button#btn-login{
-    width:100%;padding:12px;border:none;border-radius:10px;
-    background:var(--green-deep);color:#fff;font-weight:700;font-size:14px;cursor:pointer;
-  }
-  .login-err{color:var(--red);font-size:12.5px;margin-top:8px;display:none;}
+/* ===== LOGIN ===== */
+.login-box{
+  max-width:340px;margin:60px auto 0;background:var(--white);
+  border:1px solid var(--line);border-radius:16px;padding:24px 20px;text-align:center;
+}
+.login-box .lock{font-size:30px;margin-bottom:8px;}
+.login-box input[type=text]{
+  width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;
+  font-size:14px;text-align:center;box-sizing:border-box;margin:10px 0 0;
+}
+.pw-field{
+  position:relative;
+  margin:10px 0 10px;
+}
+.pw-field input{
+  width:100%;padding:12px 44px 12px 14px;border:1.5px solid var(--line);border-radius:10px;
+  font-size:14px;text-align:center;box-sizing:border-box;
+}
+.pw-field button{
+  position:absolute;
+  right:6px;
+  top:50%;
+  transform:translateY(-50%);
+  width:32px;height:32px;
+  border:none;background:transparent;
+  font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:.6;
+}
+.pw-field button:active{opacity:1;}
+.login-box button#btn-login{
+  width:100%;padding:12px;border:none;border-radius:10px;
+  background:var(--green-deep);color:#fff;font-weight:700;font-size:14px;cursor:pointer;
+}
+.login-err{color:var(--red);font-size:12.5px;margin-top:8px;display:none;}
+.login-hint{font-size:11px;color:var(--muted);margin-top:10px;}
 
-  /* ===== DASHBOARD ===== */
-  .hidden{display:none !important;}
-  .toolbar{
-    display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;
-  }
-  .toolbar input[type=text]{
-    flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--line);
-    border-radius:10px;font-size:13.5px;
-  }
-  .btn{
-    padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);
-    background:var(--white);color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;
-  }
-  .btn.primary{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
-  .btn.energy{background:var(--energy);color:#fff;border-color:var(--energy);}
-
-  .level-tabs{
-    display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;
-  }
-  .level-tab{
-    flex-shrink:0;padding:9px 14px;border-radius:20px;border:1.5px solid var(--line);
-    background:var(--white);color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer;
-    white-space:nowrap;
-  }
-  .level-tab.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
-
-  #region-filter{
-    padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;
-    font-size:13px;background:var(--white);color:var(--ink);flex-shrink:0;
-  }
-
-  .approve-cell{white-space:nowrap;}
-  .approve-btn{
-    display:inline-block;
-    padding:5px 9px;
-    margin:2px;
-    border-radius:8px;
-    border:1.5px solid var(--line);
-    background:var(--white);
-    font-size:11px;
-    font-weight:600;
-    cursor:pointer;
-    color:var(--ink);
-  }
-  .approve-btn.done{
-    background:#F0F8F3;
-    border-color:var(--green);
-    color:var(--green-deep);
-    cursor:default;
-  }
-
-  .stat-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
-  .stat-card{
-    background:var(--white);border:1px solid var(--line);border-radius:12px;
-    padding:12px 16px;min-width:120px;
-  }
-  .stat-card .n{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--energy);}
-  .stat-card .l{font-size:11.5px;color:var(--muted);}
-
-  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--white);}
-  table{width:100%;border-collapse:collapse;font-size:13px;min-width:820px;}
-  th{
-    text-align:left;background:var(--paper-2);color:var(--muted);
-    font-size:11px;text-transform:uppercase;letter-spacing:.03em;
-    padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
-  }
-  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
-  tr:last-child td{border-bottom:none;}
-  .pill{
-    display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;
-    background:#F0F8F3;color:var(--green-deep);
-  }
-  .empty-note{padding:30px;text-align:center;color:var(--muted);font-size:13.5px;}
-  .status-msg{font-size:12.5px;color:var(--muted);margin-bottom:10px;}
-  .status-msg.err{color:var(--red);}
+/* ===== DASHBOARD ===== */
+.hidden{display:none !important;}
+.top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+.who-badge{font-size:12px;color:var(--muted);background:var(--white);border:1px solid var(--line);padding:6px 10px;border-radius:10px;}
+.toolbar{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;
+}
+.toolbar input[type=text]{
+  flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;font-size:13.5px;
+}
+.btn{
+  padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);
+  background:var(--white);color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;
+}
+.btn.primary{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
+.btn.energy{background:var(--energy);color:#fff;border-color:var(--energy);}
+.btn.small{padding:6px 10px;font-size:12px;}
+.btn.danger{background:var(--white);color:var(--red);border-color:var(--red);}
+.level-tabs{
+  display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;
+}
+.level-tab{
+  flex-shrink:0;padding:9px 14px;border-radius:20px;border:1.5px solid var(--line);
+  background:var(--white);color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer;
+  white-space:nowrap;
+}
+.level-tab.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
+.level-tab:disabled{opacity:.35;cursor:not-allowed;}
+#region-filter{
+  padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;
+  font-size:13px;background:var(--white);color:var(--ink);flex-shrink:0;
+}
+.approve-cell{white-space:nowrap;}
+.approve-btn{
+  display:inline-block;
+  padding:5px 9px;
+  margin:2px;
+  border-radius:8px;
+  border:1.5px solid var(--line);
+  background:var(--white);
+  font-size:11px;
+  font-weight:600;
+  cursor:pointer;
+  color:var(--ink);
+}
+.approve-btn.done{
+  background:#F0F8F3;
+  border-color:var(--green);
+  color:var(--green-deep);
+  cursor:default;
+}
+.approve-btn:disabled:not(.done){opacity:.3;cursor:not-allowed;}
+.stat-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.stat-card{
+  background:var(--white);border:1px solid var(--line);border-radius:12px;
+  padding:12px 16px;min-width:120px;
+}
+.stat-card .n{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--energy);}
+.stat-card .l{font-size:11.5px;color:var(--muted);}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--white);}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:820px;}
+th{
+  text-align:left;background:var(--paper-2);color:var(--muted);
+  font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+.pill{
+  display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;
+  background:#F0F8F3;color:var(--green-deep);
+}
+.empty-note{padding:30px;text-align:center;color:var(--muted);font-size:13.5px;}
+.status-msg{font-size:12.5px;color:var(--muted);margin-bottom:10px;}
+.status-msg.err{color:var(--red);}
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+.field-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.field-row input[type=text],.field-row input[type=password],.field-row select{
+  padding:9px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:13px;flex:1;min-width:130px;
+}
+.accounts-list{border-top:1px solid var(--line);margin-top:6px;}
+.account-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:8px;flex-wrap:wrap;}
+.account-row .meta{font-size:12.5px;color:var(--muted);}
+.account-row .uname{font-weight:700;font-size:13.5px;}
+.role-pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px;}
+.role-pill.support{background:#EAF3FF;color:#1B4E8C;}
+.role-pill.sale{background:#FFF3E0;color:var(--energy);}
+.ref-link-box{display:flex;gap:8px;align-items:center;background:var(--paper-2);border-radius:10px;padding:10px 12px;margin:10px 0;word-break:break-all;font-size:12.5px;}
+.ref-link-box code{flex:1;}
+.tab-switch{display:flex;gap:6px;margin-bottom:16px;}
+.tab-switch button{flex:1;}
 </style>
 </head>
 <body>
@@ -146,74 +169,152 @@
   <h1>☀️ HAPPYSOLAR 50,000 — Admin</h1>
   <p class="sub">รายชื่อผู้ลงทะเบียนขอตรวจสอบสิทธิ์ (ข้อมูลจาก Netlify Forms)</p>
 
-  <!-- Netlify Forms detector for approval records (must be static markup) -->
+  <!-- Netlify Forms detectors (must be static markup for Netlify to register at build time) -->
   <form name="happysolar50k_approvals" data-netlify="true" hidden>
     <input type="text" name="appId" />
     <input type="text" name="level" />
     <input type="text" name="approvedBy" />
   </form>
+  <form name="happysolar50k_admins" data-netlify="true" hidden>
+    <input type="text" name="username" />
+    <input type="text" name="passwordHash" />
+    <input type="text" name="salt" />
+    <input type="text" name="role" />
+    <input type="text" name="level" />
+    <input type="text" name="scopeValue" />
+  </form>
 
   <div class="login-box" id="login-box">
     <div class="lock">🔒</div>
-    <div>ใส่รหัสผ่าน Admin</div>
+    <div>เข้าสู่ระบบ Admin</div>
+    <input type="text" id="admin-username" placeholder="Username (เว้นว่างถ้าเป็น Super Admin)">
     <div class="pw-field">
       <input type="password" id="admin-password" placeholder="รหัสผ่าน">
       <button type="button" id="toggle-pw" aria-label="แสดง/ซ่อนรหัสผ่าน">👁️</button>
     </div>
     <button id="btn-login">เข้าสู่ระบบ</button>
     <div class="login-err" id="login-err">รหัสผ่านไม่ถูกต้อง หรือเชื่อมต่อไม่สำเร็จ</div>
+    <div class="login-hint">Super Admin: เว้น Username ว่าง ใส่แค่รหัสผ่านหลัก</div>
   </div>
 
-  <div id="dashboard" class="hidden">
+  <!-- ===================== SALE DASHBOARD (role = sale) ===================== -->
+  <div id="sale-dashboard" class="hidden">
+    <div class="top-row">
+      <h2>🔗 ลิงก์แนะนำของฉัน</h2>
+      <span class="who-badge" id="sale-who"></span>
+    </div>
+    <div class="card">
+      <div class="sub" style="margin-bottom:8px;">ส่งลิงก์นี้ให้ลูกค้า เมื่อลูกค้าลงทะเบียนและผ่านการอนุมัติระดับประเทศแล้ว คุณจะได้คะแนนสะสม +1</div>
+      <div class="ref-link-box">
+        <code id="ref-link-text">-</code>
+        <button class="btn small primary" id="btn-copy-ref">คัดลอก</button>
+      </div>
+    </div>
     <div class="stat-row">
-      <div class="stat-card"><div class="n" id="stat-total">0</div><div class="l">ผู้ลงทะเบียนทั้งหมด</div></div>
-      <div class="stat-card"><div class="n" id="stat-today">0</div><div class="l">วันนี้</div></div>
-      <div class="stat-card"><div class="n" id="stat-week">0</div><div class="l">7 วันล่าสุด</div></div>
+      <div class="stat-card"><div class="n" id="sale-referred">0</div><div class="l">ลูกค้าที่แนะนำทั้งหมด</div></div>
+      <div class="stat-card"><div class="n" id="sale-points">0</div><div class="l">คะแนนสะสม (อนุมัติแล้ว)</div></div>
     </div>
-
-    <div class="level-tabs" id="level-tabs">
-      <button class="level-tab active" data-level="country" type="button">🌏 ทั้งประเทศ</button>
-      <button class="level-tab" data-level="region" type="button">🗺️ ระดับภาค</button>
-      <button class="level-tab" data-level="district" type="button">📍 ระดับเขต/อำเภอ</button>
-    </div>
-
-    <div class="toolbar">
-      <select id="region-filter">
-        <option value="">ทุกภาค</option>
-        <option value="ภาคเหนือ">ภาคเหนือ</option>
-        <option value="ภาคกลาง">ภาคกลาง</option>
-        <option value="ภาคตะวันออกเฉียงเหนือ">ภาคตะวันออกเฉียงเหนือ (อีสาน)</option>
-        <option value="ภาคตะวันออก">ภาคตะวันออก</option>
-        <option value="ภาคตะวันตก">ภาคตะวันตก</option>
-        <option value="ภาคใต้">ภาคใต้</option>
-      </select>
-      <input type="text" id="search-box" placeholder="ค้นหาชื่อ / เบอร์โทร / จังหวัด...">
-      <button class="btn" id="btn-refresh">🔄 รีเฟรช</button>
-      <button class="btn energy" id="btn-export">⬇️ Export CSV</button>
-    </div>
-
-    <div class="status-msg" id="status-msg"></div>
-
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>วันที่</th>
-            <th>เลขคำขอ</th>
-            <th>ชื่อ</th>
-            <th>เบอร์โทร</th>
-            <th>จังหวัด</th>
-            <th>ภาค</th>
-            <th>ประเภท</th>
-            <th>ค่าไฟ</th>
-            <th>ความสนใจ</th>
-            <th>แผนที่</th>
-            <th>อนุมัติ</th>
-          </tr>
-        </thead>
-        <tbody id="leads-tbody"></tbody>
+        <thead><tr><th>วันที่</th><th>เลขคำขอ</th><th>ชื่อ</th><th>สถานะ</th></tr></thead>
+        <tbody id="sale-leads-tbody"></tbody>
       </table>
-      <div class="empty-note hidden" id="empty-note">ยังไม่มีผู้ลงทะเบียน</div>
+      <div class="empty-note hidden" id="sale-empty-note">ยังไม่มีลูกค้าที่แนะนำ</div>
+    </div>
+    <button class="btn" id="btn-sale-refresh" style="margin-top:12px;">🔄 รีเฟรช</button>
+  </div>
+
+  <!-- ===================== MAIN DASHBOARD (role = super / support) ===================== -->
+  <div id="dashboard" class="hidden">
+    <div class="top-row">
+      <div class="stat-row" style="margin-bottom:0;">
+        <div class="stat-card"><div class="n" id="stat-total">0</div><div class="l">ผู้ลงทะเบียนทั้งหมด</div></div>
+        <div class="stat-card"><div class="n" id="stat-today">0</div><div class="l">วันนี้</div></div>
+        <div class="stat-card"><div class="n" id="stat-week">0</div><div class="l">7 วันล่าสุด</div></div>
+      </div>
+      <span class="who-badge" id="main-who"></span>
+    </div>
+
+    <div class="tab-switch hidden" id="super-tab-switch">
+      <button class="btn primary" id="tab-leads" type="button">📋 รายชื่อผู้ลงทะเบียน</button>
+      <button class="btn" id="tab-admins" type="button">👥 จัดการ Admin</button>
+    </div>
+
+    <div id="leads-view">
+      <div class="level-tabs" id="level-tabs">
+        <button class="level-tab active" data-level="country" type="button">🌏 ทั้งประเทศ</button>
+        <button class="level-tab" data-level="region" type="button">🗺️ ระดับภาค</button>
+        <button class="level-tab" data-level="district" type="button">📍 ระดับเขต/อำเภอ</button>
+      </div>
+
+      <div class="toolbar">
+        <select id="region-filter">
+          <option value="">ทุกภาค</option>
+          <option value="ภาคเหนือ">ภาคเหนือ</option>
+          <option value="ภาคกลาง">ภาคกลาง</option>
+          <option value="ภาคตะวันออกเฉียงเหนือ">ภาคตะวันออกเฉียงเหนือ (อีสาน)</option>
+          <option value="ภาคตะวันออก">ภาคตะวันออก</option>
+          <option value="ภาคตะวันตก">ภาคตะวันตก</option>
+          <option value="ภาคใต้">ภาคใต้</option>
+        </select>
+        <input type="text" id="search-box" placeholder="ค้นหาชื่อ / เบอร์โทร / จังหวัด...">
+        <button class="btn" id="btn-refresh">🔄 รีเฟรช</button>
+        <button class="btn energy" id="btn-export">⬇️ Export CSV</button>
+      </div>
+
+      <div class="status-msg" id="status-msg"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่</th>
+              <th>เลขคำขอ</th>
+              <th>ชื่อ</th>
+              <th>เบอร์โทร</th>
+              <th>จังหวัด</th>
+              <th>ภาค</th>
+              <th>ประเภท</th>
+              <th>ค่าไฟ</th>
+              <th>ความสนใจ</th>
+              <th>แผนที่</th>
+              <th>ผู้แนะนำ</th>
+              <th>อนุมัติ</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody"></tbody>
+        </table>
+        <div class="empty-note hidden" id="empty-note">ยังไม่มีผู้ลงทะเบียน</div>
+      </div>
+    </div>
+
+    <!-- ===================== MANAGE ADMINS (super only) ===================== -->
+    <div id="admins-view" class="hidden">
+      <div class="card">
+        <h2>➕ เพิ่ม Admin ใหม่</h2>
+        <div class="field-row">
+          <input type="text" id="new-acc-username" placeholder="Username">
+          <input type="password" id="new-acc-password" placeholder="รหัสผ่าน">
+        </div>
+        <div class="field-row">
+          <select id="new-acc-role">
+            <option value="support">Support Admin (อนุมัติ lead)</option>
+            <option value="sale">Sale Admin (ลิงก์แนะนำ + คะแนน)</option>
+          </select>
+          <select id="new-acc-level">
+            <option value="district">ระดับเขต/อำเภอ</option>
+            <option value="region">ระดับภาค</option>
+            <option value="country">ระดับประเทศ</option>
+          </select>
+          <input type="text" id="new-acc-scope" placeholder="พื้นที่ (ถ้ามี เช่น ภาคเหนือ) — เว้นว่างได้">
+        </div>
+        <button class="btn primary" id="btn-add-account">เพิ่ม Admin</button>
+        <div class="status-msg" id="accounts-status"></div>
+      </div>
+      <div class="card">
+        <h2>รายชื่อ Admin ทั้งหมด</h2>
+        <div class="accounts-list" id="accounts-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -221,13 +322,18 @@
 <script>
 (function(){
   const $ = id => document.getElementById(id);
+  let USERNAME = '';
   let PASSWORD = '';
+  let ROLE = '';
   let allLeads = [];
   let approvals = {}; // appId -> {district:bool, region:bool, country:bool}
-  let currentLevelFilter = 'country'; // country = no restriction, region/district = require prior level approved
+  let currentLevelFilter = 'country';
+  let myLevel = '';      // support admin's assigned level (empty for super)
+  let myScope = '';      // support admin's assigned region/scope (empty = no restriction)
 
   const TYPE_LABELS = {home:'บ้านอยู่อาศัย',farmer:'เกษตรกร',shop:'ร้านค้า',biz:'ธุรกิจ',other:'อื่นๆ'};
   const BILL_LABELS = {'1':'< 1,500 บาท','2':'1,500-3,000 บาท','3':'3,000-5,000 บาท','4':'5,000-10,000 บาท','5':'> 10,000 บาท'};
+  const LEVEL_LABELS = {district:'เขต/อำเภอ', region:'ภาค', country:'ประเทศ'};
 
   const PROVINCE_REGION = {
     'เชียงใหม่':'ภาคเหนือ','เชียงราย':'ภาคเหนือ','ลำพูน':'ภาคเหนือ','ลำปาง':'ภาคเหนือ','แพร่':'ภาคเหนือ','น่าน':'ภาคเหนือ',
@@ -243,10 +349,11 @@
     'สกลนคร':'ภาคตะวันออกเฉียงเหนือ','นครพนม':'ภาคตะวันออกเฉียงเหนือ','มุกดาหาร':'ภาคตะวันออกเฉียงเหนือ','บึงกาฬ':'ภาคตะวันออกเฉียงเหนือ',
     'ชลบุรี':'ภาคตะวันออก','ระยอง':'ภาคตะวันออก','จันทบุรี':'ภาคตะวันออก','ตราด':'ภาคตะวันออก','ฉะเชิงเทรา':'ภาคตะวันออก',
     'ปราจีนบุรี':'ภาคตะวันออก','สระแก้ว':'ภาคตะวันออก',
-    'กาญจนบุรี':'ภาคตะวันตก','ตาก':'ภาคตะวันตก','ราชบุรี':'ภาคตะวันตก','เพชรบุรี':'ภาคตะวันตก','ประจวบคีรีขันธ์':'ภาคตะวันตก','ประจวบคีรีขันธ์':'ภาคตะวันตก',
+    'กาญจนบุรี':'ภาคตะวันตก','ตาก':'ภาคตะวันตก','ราชบุรี':'ภาคตะวันตก','เพชรบุรี':'ภาคตะวันตก','ประจวบคีรีขันธ์':'ภาคตะวันตก',
     'ชุมพร':'ภาคใต้','ระนอง':'ภาคใต้','สุราษฎร์ธานี':'ภาคใต้','พังงา':'ภาคใต้','ภูเก็ต':'ภาคใต้','กระบี่':'ภาคใต้',
     'นครศรีธรรมราช':'ภาคใต้','ตรัง':'ภาคใต้','พัทลุง':'ภาคใต้','สตูล':'ภาคใต้','สงขลา':'ภาคใต้','ปัตตานี':'ภาคใต้','ยะลา':'ภาคใต้','นราธิวาส':'ภาคใต้'
   };
+
   function provinceToRegion(province){
     if(!province) return '-';
     const trimmed = province.trim();
@@ -257,13 +364,124 @@
     return '-';
   }
 
+  function authHeaders(){
+    const h = { 'X-Admin-Password': PASSWORD };
+    if(USERNAME) h['X-Admin-Username'] = USERNAME;
+    return h;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  /* ===================== LOGIN ===================== */
+
+  $('toggle-pw').addEventListener('click', ()=>{
+    const input = $('admin-password');
+    const btn = $('toggle-pw');
+    if(input.type === 'password'){
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁️';
+    }
+  });
+
+  async function doLogin(){
+    const username = $('admin-username').value.trim();
+    const password = $('admin-password').value;
+    $('login-err').style.display = 'none';
+    try{
+      const res = await fetch('/.netlify/functions/admin-login', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      const json = await res.json();
+      if(!res.ok || !json.ok){
+        $('login-err').style.display = 'block';
+        return;
+      }
+      USERNAME = json.username === 'admin' && json.role === 'super' ? '' : json.username;
+      PASSWORD = password;
+      ROLE = json.role;
+      myLevel = json.level || '';
+      myScope = json.scopeValue || '';
+      sessionStorage.setItem('happysolar50k_admin_session', JSON.stringify({ username: USERNAME, password: PASSWORD, role: ROLE, level: myLevel, scope: myScope }));
+      $('login-box').classList.add('hidden');
+      enterDashboard();
+    }catch(err){
+      $('login-err').style.display = 'block';
+    }
+  }
+
+  $('btn-login').addEventListener('click', doLogin);
+  $('admin-password').addEventListener('keydown', e=>{ if(e.key === 'Enter') doLogin(); });
+  $('admin-username').addEventListener('keydown', e=>{ if(e.key === 'Enter') doLogin(); });
+
+  function enterDashboard(){
+    if(ROLE === 'sale'){
+      $('sale-dashboard').classList.remove('hidden');
+      $('sale-who').textContent = '👤 ' + (json_username_fallback());
+      const link = location.origin + '/50000.html?ref=' + encodeURIComponent(USERNAME);
+      $('ref-link-text').textContent = link;
+      fetchSaleStats();
+    } else {
+      $('dashboard').classList.remove('hidden');
+      $('main-who').textContent = ROLE === 'super'
+        ? '👑 Super Admin'
+        : '👤 ' + USERNAME + ' — ' + (LEVEL_LABELS[myLevel]||myLevel) + (myScope ? (' (' + myScope + ')') : '');
+      if(ROLE === 'super'){
+        $('super-tab-switch').classList.remove('hidden');
+      } else {
+        // support admin: lock level tabs to their assigned level, lock region filter if scoped
+        [...document.querySelectorAll('.level-tab')].forEach(btn=>{
+          if(btn.dataset.level !== myLevel) btn.disabled = true;
+        });
+        const targetTab = document.querySelector('.level-tab[data-level="'+myLevel+'"]');
+        if(targetTab){
+          [...$('level-tabs').children].forEach(b=>b.classList.toggle('active', b===targetTab));
+          currentLevelFilter = myLevel;
+        }
+        if(myScope){
+          $('region-filter').value = myScope;
+          $('region-filter').disabled = true;
+        }
+      }
+      fetchLeads();
+    }
+  }
+
+  function json_username_fallback(){
+    return USERNAME || 'admin';
+  }
+
+  // auto-login from saved session
+  (function tryAutoLogin(){
+    const saved = sessionStorage.getItem('happysolar50k_admin_session');
+    if(!saved) return;
+    try{
+      const s = JSON.parse(saved);
+      USERNAME = s.username || '';
+      PASSWORD = s.password || '';
+      ROLE = s.role || '';
+      myLevel = s.level || '';
+      myScope = s.scope || '';
+      if(PASSWORD){
+        $('login-box').classList.add('hidden');
+        enterDashboard();
+      }
+    }catch(e){}
+  })();
+
+  /* ===================== LEADS DASHBOARD ===================== */
+
   async function fetchLeads(){
     $('status-msg').textContent = 'กำลังโหลดข้อมูล...';
     $('status-msg').className = 'status-msg';
     try{
-      const res = await fetch('/.netlify/functions/admin-leads', {
-        headers: { 'X-Admin-Password': PASSWORD }
-      });
+      const res = await fetch('/.netlify/functions/admin-leads', { headers: authHeaders() });
       const json = await res.json();
       if(!res.ok || !json.ok){
         throw new Error(json.error || ('HTTP ' + res.status));
@@ -273,11 +491,9 @@
       $('status-msg').textContent = json.note ? json.note : ('โหลดสำเร็จ — ' + allLeads.length + ' รายการ');
       renderStats();
       applyFilters();
-      return true;
     }catch(err){
       $('status-msg').textContent = 'โหลดข้อมูลไม่สำเร็จ: ' + err.message;
       $('status-msg').className = 'status-msg err';
-      return false;
     }
   }
 
@@ -307,8 +523,17 @@
     $('stat-week').textContent = week;
   }
 
+  function canApprove(level){
+    if(ROLE === 'super') return true;
+    return ROLE === 'support' && myLevel === level;
+  }
+
   function approveLead(appId, level){
-    const payload = { 'form-name': 'happysolar50k_approvals', appId, level, approvedBy: 'owner' };
+    if(!canApprove(level)){
+      alert('คุณไม่มีสิทธิ์อนุมัติระดับนี้');
+      return;
+    }
+    const payload = { 'form-name': 'happysolar50k_approvals', appId, level, approvedBy: USERNAME || 'super-admin' };
     const body = Object.keys(payload).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(payload[k])).join('&');
     fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body })
       .then(()=>{
@@ -338,7 +563,9 @@
       const ap = approvals[appId] || {district:false, region:false, country:false};
       const approveBtn = (level, label) => {
         const done = ap[level];
-        return `<button type="button" class="approve-btn ${done?'done':''}" ${done?'disabled':''} onclick="approveLead('${appId}','${level}')">${done?'✅':'⬜'} ${label}</button>`;
+        const allowed = canApprove(level);
+        const disabledAttr = (done || !allowed) ? 'disabled' : '';
+        return `<button type="button" class="approve-btn ${done?'done':''}" ${disabledAttr} onclick="approveLead('${appId}','${level}')">${done?'✅':'⬜'} ${label}</button>`;
       };
       return `<tr>
         <td>${escapeHtml(date)}</td>
@@ -351,6 +578,7 @@
         <td>${escapeHtml(billLabel)}</td>
         <td>${escapeHtml(d.purpose||'-')}</td>
         <td>${(d.lat && d.lng) ? `<a href="https://www.google.com/maps?q=${d.lat},${d.lng}" target="_blank" rel="noopener">📍 เปิดแผนที่</a>` : '-'}</td>
+        <td>${escapeHtml(d.ref||'-')}</td>
         <td class="approve-cell">
           ${approveBtn('district','เขต')}
           ${approveBtn('region','ภาค')}
@@ -358,10 +586,6 @@
         </td>
       </tr>`;
     }).join('');
-  }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
   function applyFilters(){
@@ -385,20 +609,16 @@
 
   $('level-tabs').addEventListener('click', (e)=>{
     const btn = e.target.closest('.level-tab');
-    if(!btn) return;
+    if(!btn || btn.disabled) return;
     currentLevelFilter = btn.dataset.level;
     [...$('level-tabs').children].forEach(b=>b.classList.toggle('active', b===btn));
     applyFilters();
   });
-
   $('region-filter').addEventListener('change', applyFilters);
-
   $('search-box').addEventListener('input', applyFilters);
-
   $('btn-refresh').addEventListener('click', fetchLeads);
-
   $('btn-export').addEventListener('click', ()=>{
-    const rows = [['วันที่','เลขคำขอ','ชื่อ','เบอร์โทร','LINE ID','Email','จังหวัด','ภาค','อำเภอ','ตำบล','ประเภท','ประเภทบ้าน','ค่าไฟ','ความสนใจ','ช่องทางติดต่อ','ลิงก์แผนที่']];
+    const rows = [['วันที่','เลขคำขอ','ชื่อ','เบอร์โทร','LINE ID','Email','จังหวัด','ภาค','อำเภอ','ตำบล','ประเภท','ประเภทบ้าน','ค่าไฟ','ความสนใจ','ช่องทางติดต่อ','ผู้แนะนำ','ลิงก์แผนที่']];
     allLeads.forEach(l=>{
       const d = l.data || {};
       const mapLink = (d.lat && d.lng) ? ('https://www.google.com/maps?q='+d.lat+','+d.lng) : '';
@@ -407,7 +627,7 @@
         d.appId||'', d.name||'', d.phone||'', d.lineid||'', d.email||'',
         d.province||'', provinceToRegion(d.province), d.amphoe||'', d.tambon||'',
         TYPE_LABELS[d.usertype]||d.usertype||'', d.housetype||'',
-        BILL_LABELS[d.bill]||'', d.purpose||'', d.contactpref||'', mapLink
+        BILL_LABELS[d.bill]||'', d.purpose||'', d.contactpref||'', d.ref||'', mapLink
       ]);
     });
     const csv = rows.map(r=> r.map(cell=>'"'+String(cell).replace(/"/g,'""')+'"').join(',')).join('\n');
@@ -422,46 +642,143 @@
     URL.revokeObjectURL(url);
   });
 
-  $('toggle-pw').addEventListener('click', ()=>{
-    const input = $('admin-password');
-    const btn = $('toggle-pw');
-    if(input.type === 'password'){
-      input.type = 'text';
-      btn.textContent = '🙈';
-    } else {
-      input.type = 'password';
-      btn.textContent = '👁️';
+  /* ===================== SUPER: TAB SWITCH (leads / admins) ===================== */
+
+  $('tab-leads').addEventListener('click', ()=>{
+    $('leads-view').classList.remove('hidden');
+    $('admins-view').classList.add('hidden');
+    $('tab-leads').classList.add('primary');
+    $('tab-admins').classList.remove('primary');
+  });
+  $('tab-admins').addEventListener('click', ()=>{
+    $('leads-view').classList.add('hidden');
+    $('admins-view').classList.remove('hidden');
+    $('tab-leads').classList.remove('primary');
+    $('tab-admins').classList.add('primary');
+    fetchAccounts();
+  });
+
+  /* ===================== MANAGE ADMINS (super only) ===================== */
+
+  async function fetchAccounts(){
+    $('accounts-status').textContent = 'กำลังโหลด...';
+    try{
+      const res = await fetch('/.netlify/functions/admin-accounts', { headers: authHeaders() });
+      const json = await res.json();
+      if(!res.ok || !json.ok) throw new Error(json.error || 'โหลดไม่สำเร็จ');
+      renderAccounts(json.accounts || []);
+      $('accounts-status').textContent = '';
+    }catch(err){
+      $('accounts-status').textContent = 'โหลดรายชื่อ Admin ไม่สำเร็จ: ' + err.message;
     }
-  });
-
-  $('btn-login').addEventListener('click', async ()=>{
-    PASSWORD = $('admin-password').value;
-    $('login-err').style.display = 'none';
-    const ok = await fetchLeads();
-    if(ok){
-      $('login-box').classList.add('hidden');
-      $('dashboard').classList.remove('hidden');
-      sessionStorage.setItem('happysolar50k_admin_pw', PASSWORD);
-    } else {
-      $('login-err').style.display = 'block';
-    }
-  });
-
-  $('admin-password').addEventListener('keydown', e=>{
-    if(e.key === 'Enter') $('btn-login').click();
-  });
-
-  // auto-login if password already present in this tab's session
-  const saved = sessionStorage.getItem('happysolar50k_admin_pw');
-  if(saved){
-    PASSWORD = saved;
-    fetchLeads().then(ok=>{
-      if(ok){
-        $('login-box').classList.add('hidden');
-        $('dashboard').classList.remove('hidden');
-      }
-    });
   }
+
+  function renderAccounts(list){
+    const box = $('accounts-list');
+    if(!list.length){
+      box.innerHTML = '<div class="empty-note">ยังไม่มี Admin ที่เพิ่ม</div>';
+      return;
+    }
+    box.innerHTML = list.map(a=>{
+      const roleLabel = a.role === 'sale' ? 'Sale' : 'Support';
+      const detail = a.role === 'support'
+        ? (LEVEL_LABELS[a.level]||a.level) + (a.scopeValue ? (' · ' + a.scopeValue) : '')
+        : 'ลิงก์แนะนำ + คะแนน';
+      return `<div class="account-row">
+        <div>
+          <span class="uname">${escapeHtml(a.username)}</span>
+          <span class="role-pill ${a.role}">${roleLabel}</span>
+          <div class="meta">${escapeHtml(detail)}</div>
+        </div>
+        <button class="btn small danger" onclick="deleteAccount('${a.id}','${escapeHtml(a.username)}')">ลบ</button>
+      </div>`;
+    }).join('');
+  }
+
+  window.deleteAccount = function(id, username){
+    if(!confirm('ลบ admin "'+username+'" ใช่ไหม?')) return;
+    fetch('/.netlify/functions/admin-accounts', {
+      method:'POST',
+      headers: Object.assign({'Content-Type':'application/json'}, authHeaders()),
+      body: JSON.stringify({ action:'delete', id })
+    }).then(res=>res.json()).then(json=>{
+      if(!json.ok){ alert('ลบไม่สำเร็จ: ' + (json.error||'')); return; }
+      fetchAccounts();
+    }).catch(()=> alert('ลบไม่สำเร็จ ลองใหม่อีกครั้ง'));
+  };
+
+  $('new-acc-role').addEventListener('change', ()=>{
+    const isSupport = $('new-acc-role').value === 'support';
+    $('new-acc-level').style.display = isSupport ? '' : 'none';
+    $('new-acc-scope').style.display = isSupport ? '' : 'none';
+  });
+
+  $('btn-add-account').addEventListener('click', async ()=>{
+    const username = $('new-acc-username').value.trim();
+    const password = $('new-acc-password').value;
+    const role = $('new-acc-role').value;
+    const level = $('new-acc-level').value;
+    const scopeValue = $('new-acc-scope').value.trim();
+    if(!username || !password){
+      $('accounts-status').textContent = 'กรุณากรอก Username และรหัสผ่าน';
+      return;
+    }
+    $('accounts-status').textContent = 'กำลังบันทึก...';
+    try{
+      const res = await fetch('/.netlify/functions/admin-accounts', {
+        method:'POST',
+        headers: Object.assign({'Content-Type':'application/json'}, authHeaders()),
+        body: JSON.stringify({ action:'create', username, password, role, level: role==='support'?level:'', scopeValue: role==='support'?scopeValue:'' })
+      });
+      const json = await res.json();
+      if(!res.ok || !json.ok) throw new Error(json.error || 'บันทึกไม่สำเร็จ');
+      $('new-acc-username').value = '';
+      $('new-acc-password').value = '';
+      $('new-acc-scope').value = '';
+      $('accounts-status').textContent = 'เพิ่ม Admin สำเร็จ ✅';
+      fetchAccounts();
+    }catch(err){
+      $('accounts-status').textContent = 'เพิ่มไม่สำเร็จ: ' + err.message;
+    }
+  });
+
+  /* ===================== SALE DASHBOARD ===================== */
+
+  $('btn-copy-ref').addEventListener('click', ()=>{
+    const text = $('ref-link-text').textContent;
+    navigator.clipboard.writeText(text).then(()=>{
+      $('btn-copy-ref').textContent = 'คัดลอกแล้ว ✓';
+      setTimeout(()=>{ $('btn-copy-ref').textContent = 'คัดลอก'; }, 1500);
+    }).catch(()=>{ alert('คัดลอกไม่สำเร็จ กรุณาคัดลอกด้วยตนเอง'); });
+  });
+
+  async function fetchSaleStats(){
+    try{
+      const res = await fetch('/.netlify/functions/admin-sale-stats', { headers: authHeaders() });
+      const json = await res.json();
+      if(!res.ok || !json.ok) throw new Error(json.error || 'โหลดไม่สำเร็จ');
+      $('sale-referred').textContent = json.referred;
+      $('sale-points').textContent = json.points;
+      const tbody = $('sale-leads-tbody');
+      if(!json.leads || !json.leads.length){
+        tbody.innerHTML = '';
+        $('sale-empty-note').classList.remove('hidden');
+      } else {
+        $('sale-empty-note').classList.add('hidden');
+        tbody.innerHTML = json.leads.map(l=>{
+          const date = l.created_at ? new Date(l.created_at).toLocaleString('th-TH') : '-';
+          const status = l.approved ? '✅ อนุมัติแล้ว (+1 คะแนน)' : '⏳ รอดำเนินการ';
+          return `<tr><td>${escapeHtml(date)}</td><td><span class="pill">${escapeHtml(l.appId||'-')}</span></td><td>${escapeHtml(l.name||'-')}</td><td>${status}</td></tr>`;
+        }).join('');
+      }
+    }catch(err){
+      $('sale-leads-tbody').innerHTML = '';
+      $('sale-empty-note').classList.remove('hidden');
+      $('sale-empty-note').textContent = 'โหลดข้อมูลไม่สำเร็จ: ' + err.message;
+    }
+  }
+  $('btn-sale-refresh').addEventListener('click', fetchSaleStats);
+
 })();
 </script>
 </body>
