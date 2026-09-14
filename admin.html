@@ -64,6 +64,41 @@
   .btn.primary{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
   .btn.energy{background:var(--energy);color:#fff;border-color:var(--energy);}
 
+  .level-tabs{
+    display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;
+  }
+  .level-tab{
+    flex-shrink:0;padding:9px 14px;border-radius:20px;border:1.5px solid var(--line);
+    background:var(--white);color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer;
+    white-space:nowrap;
+  }
+  .level-tab.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
+
+  #region-filter{
+    padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;
+    font-size:13px;background:var(--white);color:var(--ink);flex-shrink:0;
+  }
+
+  .approve-cell{white-space:nowrap;}
+  .approve-btn{
+    display:inline-block;
+    padding:5px 9px;
+    margin:2px;
+    border-radius:8px;
+    border:1.5px solid var(--line);
+    background:var(--white);
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .approve-btn.done{
+    background:#F0F8F3;
+    border-color:var(--green);
+    color:var(--green-deep);
+    cursor:default;
+  }
+
   .stat-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
   .stat-card{
     background:var(--white);border:1px solid var(--line);border-radius:12px;
@@ -95,6 +130,13 @@
   <h1>☀️ HAPPYSOLAR 50,000 — Admin</h1>
   <p class="sub">รายชื่อผู้ลงทะเบียนขอตรวจสอบสิทธิ์ (ข้อมูลจาก Netlify Forms)</p>
 
+  <!-- Netlify Forms detector for approval records (must be static markup) -->
+  <form name="happysolar50k_approvals" data-netlify="true" hidden>
+    <input type="text" name="appId" />
+    <input type="text" name="level" />
+    <input type="text" name="approvedBy" />
+  </form>
+
   <div class="login-box" id="login-box">
     <div class="lock">🔒</div>
     <div>ใส่รหัสผ่าน Admin</div>
@@ -110,7 +152,22 @@
       <div class="stat-card"><div class="n" id="stat-week">0</div><div class="l">7 วันล่าสุด</div></div>
     </div>
 
+    <div class="level-tabs" id="level-tabs">
+      <button class="level-tab active" data-level="country" type="button">🌏 ทั้งประเทศ</button>
+      <button class="level-tab" data-level="region" type="button">🗺️ ระดับภาค</button>
+      <button class="level-tab" data-level="district" type="button">📍 ระดับเขต/อำเภอ</button>
+    </div>
+
     <div class="toolbar">
+      <select id="region-filter">
+        <option value="">ทุกภาค</option>
+        <option value="ภาคเหนือ">ภาคเหนือ</option>
+        <option value="ภาคกลาง">ภาคกลาง</option>
+        <option value="ภาคตะวันออกเฉียงเหนือ">ภาคตะวันออกเฉียงเหนือ (อีสาน)</option>
+        <option value="ภาคตะวันออก">ภาคตะวันออก</option>
+        <option value="ภาคตะวันตก">ภาคตะวันตก</option>
+        <option value="ภาคใต้">ภาคใต้</option>
+      </select>
       <input type="text" id="search-box" placeholder="ค้นหาชื่อ / เบอร์โทร / จังหวัด...">
       <button class="btn" id="btn-refresh">🔄 รีเฟรช</button>
       <button class="btn energy" id="btn-export">⬇️ Export CSV</button>
@@ -127,10 +184,12 @@
             <th>ชื่อ</th>
             <th>เบอร์โทร</th>
             <th>จังหวัด</th>
+            <th>ภาค</th>
             <th>ประเภท</th>
             <th>ค่าไฟ</th>
             <th>ความสนใจ</th>
             <th>แผนที่</th>
+            <th>อนุมัติ</th>
           </tr>
         </thead>
         <tbody id="leads-tbody"></tbody>
@@ -145,9 +204,39 @@
   const $ = id => document.getElementById(id);
   let PASSWORD = '';
   let allLeads = [];
+  let approvals = {}; // appId -> {district:bool, region:bool, country:bool}
+  let currentLevelFilter = 'country'; // country = no restriction, region/district = require prior level approved
 
   const TYPE_LABELS = {home:'บ้านอยู่อาศัย',farmer:'เกษตรกร',shop:'ร้านค้า',biz:'ธุรกิจ',other:'อื่นๆ'};
   const BILL_LABELS = {'1':'< 1,500 บาท','2':'1,500-3,000 บาท','3':'3,000-5,000 บาท','4':'5,000-10,000 บาท','5':'> 10,000 บาท'};
+
+  const PROVINCE_REGION = {
+    'เชียงใหม่':'ภาคเหนือ','เชียงราย':'ภาคเหนือ','ลำพูน':'ภาคเหนือ','ลำปาง':'ภาคเหนือ','แพร่':'ภาคเหนือ','น่าน':'ภาคเหนือ',
+    'พะเยา':'ภาคเหนือ','แม่ฮ่องสอน':'ภาคเหนือ','อุตรดิตถ์':'ภาคเหนือ','ตาก':'ภาคเหนือ','สุโขทัย':'ภาคเหนือ',
+    'พิษณุโลก':'ภาคเหนือ','พิจิตร':'ภาคเหนือ','เพชรบูรณ์':'ภาคเหนือ','กำแพงเพชร':'ภาคเหนือ','นครสวรรค์':'ภาคเหนือ','อุทัยธานี':'ภาคเหนือ',
+    'กรุงเทพมหานคร':'ภาคกลาง','นนทบุรี':'ภาคกลาง','ปทุมธานี':'ภาคกลาง','สมุทรปราการ':'ภาคกลาง','นครปฐม':'ภาคกลาง',
+    'สมุทรสาคร':'ภาคกลาง','พระนครศรีอยุธยา':'ภาคกลาง','สิงห์บุรี':'ภาคกลาง','ลพบุรี':'ภาคกลาง','ชัยนาท':'ภาคกลาง',
+    'สระบุรี':'ภาคกลาง','อ่างทอง':'ภาคกลาง','สุพรรณบุรี':'ภาคกลาง','นครนายก':'ภาคกลาง','สมุทรสงคราม':'ภาคกลาง',
+    'นครราชสีมา':'ภาคตะวันออกเฉียงเหนือ','บุรีรัมย์':'ภาคตะวันออกเฉียงเหนือ','สุรินทร์':'ภาคตะวันออกเฉียงเหนือ','ศรีสะเกษ':'ภาคตะวันออกเฉียงเหนือ',
+    'อุบลราชธานี':'ภาคตะวันออกเฉียงเหนือ','ยโสธร':'ภาคตะวันออกเฉียงเหนือ','ชัยภูมิ':'ภาคตะวันออกเฉียงเหนือ','อำนาจเจริญ':'ภาคตะวันออกเฉียงเหนือ',
+    'หนองบัวลำภู':'ภาคตะวันออกเฉียงเหนือ','ขอนแก่น':'ภาคตะวันออกเฉียงเหนือ','อุดรธานี':'ภาคตะวันออกเฉียงเหนือ','เลย':'ภาคตะวันออกเฉียงเหนือ',
+    'หนองคาย':'ภาคตะวันออกเฉียงเหนือ','มหาสารคาม':'ภาคตะวันออกเฉียงเหนือ','ร้อยเอ็ด':'ภาคตะวันออกเฉียงเหนือ','กาฬสินธุ์':'ภาคตะวันออกเฉียงเหนือ',
+    'สกลนคร':'ภาคตะวันออกเฉียงเหนือ','นครพนม':'ภาคตะวันออกเฉียงเหนือ','มุกดาหาร':'ภาคตะวันออกเฉียงเหนือ','บึงกาฬ':'ภาคตะวันออกเฉียงเหนือ',
+    'ชลบุรี':'ภาคตะวันออก','ระยอง':'ภาคตะวันออก','จันทบุรี':'ภาคตะวันออก','ตราด':'ภาคตะวันออก','ฉะเชิงเทรา':'ภาคตะวันออก',
+    'ปราจีนบุรี':'ภาคตะวันออก','สระแก้ว':'ภาคตะวันออก',
+    'กาญจนบุรี':'ภาคตะวันตก','ตาก':'ภาคตะวันตก','ราชบุรี':'ภาคตะวันตก','เพชรบุรี':'ภาคตะวันตก','ประจวบคีรีขันธ์':'ภาคตะวันตก','ประจวบคีรีขันธ์':'ภาคตะวันตก',
+    'ชุมพร':'ภาคใต้','ระนอง':'ภาคใต้','สุราษฎร์ธานี':'ภาคใต้','พังงา':'ภาคใต้','ภูเก็ต':'ภาคใต้','กระบี่':'ภาคใต้',
+    'นครศรีธรรมราช':'ภาคใต้','ตรัง':'ภาคใต้','พัทลุง':'ภาคใต้','สตูล':'ภาคใต้','สงขลา':'ภาคใต้','ปัตตานี':'ภาคใต้','ยะลา':'ภาคใต้','นราธิวาส':'ภาคใต้'
+  };
+  function provinceToRegion(province){
+    if(!province) return '-';
+    const trimmed = province.trim();
+    if(PROVINCE_REGION[trimmed]) return PROVINCE_REGION[trimmed];
+    for(const key in PROVINCE_REGION){
+      if(trimmed.includes(key) || key.includes(trimmed)) return PROVINCE_REGION[key];
+    }
+    return '-';
+  }
 
   async function fetchLeads(){
     $('status-msg').textContent = 'กำลังโหลดข้อมูล...';
@@ -161,15 +250,27 @@
         throw new Error(json.error || ('HTTP ' + res.status));
       }
       allLeads = json.submissions || [];
+      approvals = mergeApprovals(json.approvals || []);
       $('status-msg').textContent = json.note ? json.note : ('โหลดสำเร็จ — ' + allLeads.length + ' รายการ');
       renderStats();
-      renderTable(allLeads);
+      applyFilters();
       return true;
     }catch(err){
       $('status-msg').textContent = 'โหลดข้อมูลไม่สำเร็จ: ' + err.message;
       $('status-msg').className = 'status-msg err';
       return false;
     }
+  }
+
+  function mergeApprovals(list){
+    const map = {};
+    list.forEach(a=>{
+      const d = a.data || {};
+      if(!d.appId || !d.level) return;
+      if(!map[d.appId]) map[d.appId] = {district:false, region:false, country:false};
+      if(d.level === 'district' || d.level === 'region' || d.level === 'country') map[d.appId][d.level] = true;
+    });
+    return map;
   }
 
   function renderStats(){
@@ -187,6 +288,19 @@
     $('stat-week').textContent = week;
   }
 
+  function approveLead(appId, level){
+    const payload = { 'form-name': 'happysolar50k_approvals', appId, level, approvedBy: 'owner' };
+    const body = Object.keys(payload).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(payload[k])).join('&');
+    fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body })
+      .then(()=>{
+        if(!approvals[appId]) approvals[appId] = {district:false, region:false, country:false};
+        approvals[appId][level] = true;
+        applyFilters();
+      })
+      .catch(()=>{ alert('บันทึกการอนุมัติไม่สำเร็จ ลองใหม่อีกครั้ง'); });
+  }
+  window.approveLead = approveLead;
+
   function renderTable(list){
     const tbody = $('leads-tbody');
     if(!list.length){
@@ -200,16 +314,29 @@
       const date = l.created_at ? new Date(l.created_at).toLocaleString('th-TH') : '-';
       const typeLabel = TYPE_LABELS[d.usertype] || d.usertype || '-';
       const billLabel = BILL_LABELS[d.bill] || '-';
+      const region = provinceToRegion(d.province);
+      const appId = d.appId || '';
+      const ap = approvals[appId] || {district:false, region:false, country:false};
+      const approveBtn = (level, label) => {
+        const done = ap[level];
+        return `<button type="button" class="approve-btn ${done?'done':''}" ${done?'disabled':''} onclick="approveLead('${appId}','${level}')">${done?'✅':'⬜'} ${label}</button>`;
+      };
       return `<tr>
         <td>${escapeHtml(date)}</td>
-        <td><span class="pill">${escapeHtml(d.appId||'-')}</span></td>
+        <td><span class="pill">${escapeHtml(appId||'-')}</span></td>
         <td>${escapeHtml(d.name||'-')}</td>
         <td>${escapeHtml(d.phone||'-')}</td>
         <td>${escapeHtml(d.province||'-')}</td>
+        <td>${escapeHtml(region)}</td>
         <td>${escapeHtml(typeLabel)}</td>
         <td>${escapeHtml(billLabel)}</td>
         <td>${escapeHtml(d.purpose||'-')}</td>
         <td>${(d.lat && d.lng) ? `<a href="https://www.google.com/maps?q=${d.lat},${d.lng}" target="_blank" rel="noopener">📍 เปิดแผนที่</a>` : '-'}</td>
+        <td class="approve-cell">
+          ${approveBtn('district','เขต')}
+          ${approveBtn('region','ภาค')}
+          ${approveBtn('country','ประเทศ')}
+        </td>
       </tr>`;
     }).join('');
   }
@@ -218,27 +345,48 @@
     return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  $('search-box').addEventListener('input', ()=>{
+  function applyFilters(){
     const q = $('search-box').value.trim().toLowerCase();
-    if(!q){ renderTable(allLeads); return; }
-    const filtered = allLeads.filter(l=>{
+    const regionSel = $('region-filter').value;
+    let filtered = allLeads.filter(l=>{
       const d = l.data || {};
-      return [d.name, d.phone, d.province, d.appId].some(v=> (v||'').toLowerCase().includes(q));
+      const matchesSearch = !q || [d.name, d.phone, d.province, d.appId].some(v=> (v||'').toLowerCase().includes(q));
+      const matchesRegion = !regionSel || provinceToRegion(d.province) === regionSel;
+      let matchesLevel = true;
+      if(currentLevelFilter === 'region'){
+        const ap = approvals[d.appId] || {};
+        matchesLevel = !!ap.district; // only show leads that already cleared district level
+      } else if(currentLevelFilter === 'district'){
+        matchesLevel = true; // district is the entry level — show all
+      }
+      return matchesSearch && matchesRegion && matchesLevel;
     });
     renderTable(filtered);
+  }
+
+  $('level-tabs').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.level-tab');
+    if(!btn) return;
+    currentLevelFilter = btn.dataset.level;
+    [...$('level-tabs').children].forEach(b=>b.classList.toggle('active', b===btn));
+    applyFilters();
   });
+
+  $('region-filter').addEventListener('change', applyFilters);
+
+  $('search-box').addEventListener('input', applyFilters);
 
   $('btn-refresh').addEventListener('click', fetchLeads);
 
   $('btn-export').addEventListener('click', ()=>{
-    const rows = [['วันที่','เลขคำขอ','ชื่อ','เบอร์โทร','LINE ID','Email','จังหวัด','อำเภอ','ตำบล','ประเภท','ประเภทบ้าน','ค่าไฟ','ความสนใจ','ช่องทางติดต่อ','ลิงก์แผนที่']];
+    const rows = [['วันที่','เลขคำขอ','ชื่อ','เบอร์โทร','LINE ID','Email','จังหวัด','ภาค','อำเภอ','ตำบล','ประเภท','ประเภทบ้าน','ค่าไฟ','ความสนใจ','ช่องทางติดต่อ','ลิงก์แผนที่']];
     allLeads.forEach(l=>{
       const d = l.data || {};
       const mapLink = (d.lat && d.lng) ? ('https://www.google.com/maps?q='+d.lat+','+d.lng) : '';
       rows.push([
         l.created_at ? new Date(l.created_at).toLocaleString('th-TH') : '',
         d.appId||'', d.name||'', d.phone||'', d.lineid||'', d.email||'',
-        d.province||'', d.amphoe||'', d.tambon||'',
+        d.province||'', provinceToRegion(d.province), d.amphoe||'', d.tambon||'',
         TYPE_LABELS[d.usertype]||d.usertype||'', d.housetype||'',
         BILL_LABELS[d.bill]||'', d.purpose||'', d.contactpref||'', mapLink
       ]);

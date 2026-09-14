@@ -62,7 +62,7 @@
     border-bottom:1px solid var(--line);
   }
   .brand{display:flex;align-items:center;gap:8px;}
-  .brand-logo{height:28px;width:auto;display:block;}
+  .brand-logo{height:44px;width:auto;display:block;}
   .brand-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;letter-spacing:-0.01em;}
   .lang-switch{display:flex;gap:4px;background:var(--paper-2);border-radius:20px;padding:3px;}
   .lang-switch button{
@@ -702,10 +702,11 @@
       f_province: "จังหวัด",
       f_amphoe: "อำเภอ",
       f_tambon: "ตำบล",
-      f_map_label: "ปักหมุดตำแหน่งบ้าน (ไม่บังคับ)",
+      f_map_label: "ปักหมุดตำแหน่งบ้าน — ระบบจะกรอกที่อยู่ให้อัตโนมัติ",
       btn_use_gps: "ใช้ตำแหน่งปัจจุบันของฉัน",
-      map_hint: "แตะบนแผนที่หรือลากหมุดเพื่อปรับตำแหน่งให้ตรงบ้านจริง",
+      map_hint: "แตะบนแผนที่หรือลากหมุดเพื่อปรับตำแหน่งให้ตรงบ้านจริง — จังหวัด/อำเภอ/ตำบลด้านล่างจะถูกกรอกให้อัตโนมัติ แก้ไขเองภายหลังได้",
       map_pin_set: "ปักหมุดแล้ว",
+      geo_filling: "กำลังค้นหาที่อยู่...",
       map_no_pin: "ยังไม่ได้ปักหมุด",
       geo_unsupported: "อุปกรณ์นี้ไม่รองรับการระบุตำแหน่ง กรุณาปักหมุดบนแผนที่ด้วยตนเอง",
       geo_locating: "กำลังค้นหาตำแหน่ง...",
@@ -839,10 +840,11 @@
       f_province: "Province",
       f_amphoe: "District",
       f_tambon: "Sub-district",
-      f_map_label: "Pin your home location (optional)",
+      f_map_label: "Pin your home location — we\u2019ll auto-fill your address",
       btn_use_gps: "Use my current location",
-      map_hint: "Tap the map or drag the pin to match your exact home",
+      map_hint: "Tap the map or drag the pin to match your exact home \u2014 the province/district/sub-district fields below will be auto-filled (you can still edit them)",
       map_pin_set: "Pin set",
+      geo_filling: "Looking up address...",
       map_no_pin: "No pin set yet",
       geo_unsupported: "This device doesn't support location detection. Please place the pin manually.",
       geo_locating: "Locating...",
@@ -976,10 +978,11 @@
       f_province: "府（省）",
       f_amphoe: "县",
       f_tambon: "乡",
-      f_map_label: "标记您家的位置（可选）",
+      f_map_label: "标记您家的位置 — 系统将自动填写地址",
       btn_use_gps: "使用我的当前位置",
-      map_hint: "点击地图或拖动标记以对准您家的确切位置",
+      map_hint: "点击地图或拖动标记以对准您家的确切位置——下方的府/县/乡字段将自动填写，您也可以手动修改",
       map_pin_set: "已标记",
+      geo_filling: "正在查询地址...",
       map_no_pin: "尚未标记位置",
       geo_unsupported: "此设备不支持定位功能，请手动在地图上标记。",
       geo_locating: "正在定位...",
@@ -1179,9 +1182,6 @@
 
     else if(wizardStep === 1){
       html += `<div class="step-sub">${t('step2_sub')}</div><div class="step-title">${t('step2_title')}</div>`;
-      html += `<div class="field"><label>${t('f_province')}</label><input type="text" id="f-province" value="${formData.province||''}"></div>`;
-      html += `<div class="field"><label>${t('f_amphoe')}</label><input type="text" id="f-amphoe" value="${formData.amphoe||''}"></div>`;
-      html += `<div class="field"><label>${t('f_tambon')}</label><input type="text" id="f-tambon" value="${formData.tambon||''}"></div>`;
       html += `<div class="field">
         <label>${t('f_map_label')}</label>
         <div class="map-box">
@@ -1191,6 +1191,9 @@
           <div class="map-coords" id="map-coords">${formData.lat ? t('map_pin_set')+': '+Number(formData.lat).toFixed(5)+', '+Number(formData.lng).toFixed(5) : t('map_no_pin')}</div>
         </div>
       </div>`;
+      html += `<div class="field"><label>${t('f_province')}</label><input type="text" id="f-province" value="${formData.province||''}"></div>`;
+      html += `<div class="field"><label>${t('f_amphoe')}</label><input type="text" id="f-amphoe" value="${formData.amphoe||''}"></div>`;
+      html += `<div class="field"><label>${t('f_tambon')}</label><input type="text" id="f-tambon" value="${formData.tambon||''}"></div>`;
       html += `<div class="field"><label>${t('q_housetype')}</label><div class="opt-group">`;
       html += optCardHTML('housetype','single',t('opt_single'),false);
       html += optCardHTML('housetype','garden',t('opt_garden'),false);
@@ -1294,6 +1297,31 @@
     formData.lng = lng;
     const coordsEl = document.getElementById('map-coords');
     if(coordsEl) coordsEl.textContent = t('map_pin_set') + ': ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+    reverseGeocodeAndFill(lat, lng);
+  }
+
+  async function reverseGeocodeAndFill(lat, lng){
+    const coordsEl = document.getElementById('map-coords');
+    try{
+      if(coordsEl) coordsEl.textContent += ' — ' + t('geo_filling');
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=th&zoom=14`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await res.json();
+      const addr = data.address || {};
+      const province = addr.state || addr.province || '';
+      const amphoe = addr.county || addr.city || addr.town || addr.district || '';
+      const tambon = addr.suburb || addr.village || addr.subdistrict || addr.city_district || addr.neighbourhood || '';
+
+      if(province){ formData.province = province; const el = document.getElementById('f-province'); if(el) el.value = province; }
+      if(amphoe){ formData.amphoe = amphoe; const el = document.getElementById('f-amphoe'); if(el) el.value = amphoe; }
+      if(tambon){ formData.tambon = tambon; const el = document.getElementById('f-tambon'); if(el) el.value = tambon; }
+
+      if(coordsEl) coordsEl.textContent = t('map_pin_set') + ': ' + lat.toFixed(5) + ', ' + lng.toFixed(5) + (province ? ' — ' + [tambon,amphoe,province].filter(Boolean).join(', ') : '');
+    }catch(err){
+      if(coordsEl) coordsEl.textContent = t('map_pin_set') + ': ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+      /* non-critical: address auto-fill failed, customer can still type manually */
+    }
   }
 
   function initLocationMap(){
