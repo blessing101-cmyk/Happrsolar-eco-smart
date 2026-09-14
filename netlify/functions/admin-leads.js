@@ -1,6 +1,14 @@
 // Admin-only endpoint: fetches "happysolar50k" (leads) and "happysolar50k_approvals"
 // form submissions via the Netlify API. Requires NETLIFY_API_TOKEN + NETLIFY_SITE_ID +
 // ADMIN_PASSWORD to be set as environment variables on this site.
+//
+// Auth modes:
+//  1) Super admin: header X-Admin-Password === ADMIN_PASSWORD, no X-Admin-Username.
+//  2) Support admin (district/region/country level): X-Admin-Username + X-Admin-Password
+//     matching a record stored in the "happysolar50k_admins" form, with role !== 'sale'.
+//     Sale-role accounts are rejected here — they use admin-sale-stats.js instead.
+
+const crypto = require('crypto');
 
 async function fetchFormSubmissions(siteId, apiToken, formName) {
   const formsRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}/forms`, {
@@ -30,20 +38,55 @@ async function fetchFormSubmissions(siteId, apiToken, formName) {
   return { submissions: simplified, found: true };
 }
 
+function verifyPassword(password, salt, expectedHash) {
+  try {
+    if (!password || !salt || !expectedHash) return false;
+    const hash = crypto.scryptSync(password, salt, 64);
+    const expected = Buffer.from(expectedHash, 'hex');
+    if (hash.length !== expected.length) return false;
+    return crypto.timingSafeEqual(hash, expected);
+  } catch (e) {
+    return false;
+  }
+}
+
 exports.handler = async (event) => {
   try {
-    const givenPassword = event.headers['x-admin-password'] || event.headers['X-Admin-Password'];
+    const apiToken = process.env.NETLIFY_API_TOKEN;
+    const siteId = process.env.NETLIFY_SITE_ID;
     const expectedPassword = process.env.ADMIN_PASSWORD;
 
-    if (!expectedPassword) {
-      return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'ADMIN_PASSWORD not configured' }) };
+    const givenPassword = event.headers['x-admin-password'] || event.headers['X-Admin-Password'];
+    const givenUsername = (event.headers['x-admin-username'] || event.headers['X-Admin-Username'] || '').trim();
+
+    let authedRole = null, authedLevel = '', authedScope = '';
+
+    if (!givenUsername) {
+      if (!expectedPassword) {
+        return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'ADMIN_PASSWORD not configured' }) };
+      }
+      if (givenPassword && givenPassword === expectedPassword) {
+        authedRole = 'super';
+      }
+    } else {
+      if (!apiToken || !siteId) {
+        return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'missing NETLIFY_API_TOKEN or NETLIFY_SITE_ID' }) };
+      }
+      const accountsResult = await fetchFormSubmissions(siteId, apiToken, 'happysolar50k_admins');
+      const account = accountsResult.submissions.find(
+        s => (s.data.username || '').toLowerCase() === givenUsername.toLowerCase()
+      );
+      if (account && account.data.role !== 'sale' && verifyPassword(givenPassword, account.data.salt, account.data.passwordHash)) {
+        authedRole = account.data.role;
+        authedLevel = account.data.level || '';
+        authedScope = account.data.scopeValue || '';
+      }
     }
-    if (!givenPassword || givenPassword !== expectedPassword) {
+
+    if (!authedRole) {
       return { statusCode: 401, body: JSON.stringify({ ok: false, error: 'unauthorized' }) };
     }
 
-    const apiToken = process.env.NETLIFY_API_TOKEN;
-    const siteId = process.env.NETLIFY_SITE_ID;
     if (!apiToken || !siteId) {
       return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'missing NETLIFY_API_TOKEN or NETLIFY_SITE_ID' }) };
     }
@@ -65,6 +108,9 @@ exports.handler = async (event) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ok: true,
+        role: authedRole,
+        level: authedLevel,
+        scopeValue: authedScope,
         submissions: leadsResult.submissions,
         approvals: approvalsResult.submissions,
         note
