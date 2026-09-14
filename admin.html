@@ -38,11 +38,27 @@
     border:1px solid var(--line);border-radius:16px;padding:24px 20px;text-align:center;
   }
   .login-box .lock{font-size:30px;margin-bottom:8px;}
-  .login-box input{
-    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;
-    font-size:14px;margin:14px 0 10px;text-align:center;
+  .pw-field{
+    position:relative;
+    margin:14px 0 10px;
   }
-  .login-box button{
+  .pw-field input{
+    width:100%;padding:12px 44px 12px 14px;border:1.5px solid var(--line);border-radius:10px;
+    font-size:14px;text-align:center;box-sizing:border-box;
+  }
+  .pw-field button{
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    width:32px;height:32px;
+    border:none;background:transparent;
+    font-size:16px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    opacity:.6;
+  }
+  .pw-field button:active{opacity:1;}
+  .login-box button#btn-login{
     width:100%;padding:12px;border:none;border-radius:10px;
     background:var(--green-deep);color:#fff;font-weight:700;font-size:14px;cursor:pointer;
   }
@@ -140,7 +156,10 @@
   <div class="login-box" id="login-box">
     <div class="lock">🔒</div>
     <div>ใส่รหัสผ่าน Admin</div>
-    <input type="password" id="admin-password" placeholder="รหัสผ่าน">
+    <div class="pw-field">
+      <input type="password" id="admin-password" placeholder="รหัสผ่าน">
+      <button type="button" id="toggle-pw" aria-label="แสดง/ซ่อนรหัสผ่าน">👁️</button>
+    </div>
     <button id="btn-login">เข้าสู่ระบบ</button>
     <div class="login-err" id="login-err">รหัสผ่านไม่ถูกต้อง หรือเชื่อมต่อไม่สำเร็จ</div>
   </div>
@@ -401,6 +420,18 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  });
+
+  $('toggle-pw').addEventListener('click', ()=>{
+    const input = $('admin-password');
+    const btn = $('toggle-pw');
+    if(input.type === 'password'){
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁️';
+    }
   });
 
   $('btn-login').addEventListener('click', async ()=>{
