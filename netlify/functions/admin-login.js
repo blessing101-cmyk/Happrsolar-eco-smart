@@ -1,30 +1,21 @@
 // Login endpoint for the HAPPYSOLAR 50,000 admin dashboard.
 // Body: { username, password }
 //  - Leave username blank to log in as the super admin (uses ADMIN_PASSWORD env var).
-//  - Otherwise, looks up a personal account stored in the "happysolar50k_admins" form
-//    (created via admin-accounts.js) and verifies the password against its stored hash.
+//  - Otherwise, looks up a personal account stored in Netlify Blobs
+//    (created via admin-accounts.js or sale-signup.js) and verifies the password.
 //
 // Returns: { ok, role: 'super'|'support'|'sale', username, level, scopeValue }
 
 const crypto = require('crypto');
+const { getStore } = require('@netlify/blobs');
 
-async function fetchFormSubmissions(siteId, apiToken, formName) {
-  const formsRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}/forms`, {
-    headers: { Authorization: 'Bearer ' + apiToken }
-  });
-  if (!formsRes.ok) return { submissions: [], found: false };
-  const forms = await formsRes.json();
-  const form = Array.isArray(forms) ? forms.find(f => f.name === formName) : null;
-  if (!form) return { submissions: [], found: false };
-  const subsRes = await fetch(`https://api.netlify.com/api/v1/forms/${form.id}/submissions`, {
-    headers: { Authorization: 'Bearer ' + apiToken }
-  });
-  if (!subsRes.ok) return { submissions: [], found: false };
-  const subs = await subsRes.json();
-  return {
-    submissions: (Array.isArray(subs) ? subs : []).map(s => ({ id: s.id, created_at: s.created_at, data: s.data || {} })),
-    found: true
-  };
+const STORE_NAME = 'happysolar-admins';
+const KEY = 'accounts';
+
+async function loadAccounts() {
+  const store = getStore(STORE_NAME);
+  const list = await store.get(KEY, { type: 'json' });
+  return Array.isArray(list) ? list : [];
 }
 
 function verifyPassword(password, salt, expectedHash) {
@@ -66,18 +57,10 @@ exports.handler = async (event) => {
       return { statusCode: 401, body: JSON.stringify({ ok: false, error: 'unauthorized' }) };
     }
 
-    const apiToken = process.env.NETLIFY_API_TOKEN;
-    const siteId = process.env.NETLIFY_SITE_ID;
-    if (!apiToken || !siteId) {
-      return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'server not configured' }) };
-    }
+    const accounts = await loadAccounts();
+    const account = accounts.find(a => (a.username || '').toLowerCase() === username.toLowerCase());
 
-    const result = await fetchFormSubmissions(siteId, apiToken, 'happysolar50k_admins');
-    const account = result.submissions.find(
-      s => (s.data.username || '').toLowerCase() === username.toLowerCase()
-    );
-
-    if (!account || !verifyPassword(password, account.data.salt, account.data.passwordHash)) {
+    if (!account || !verifyPassword(password, account.salt, account.passwordHash)) {
       return { statusCode: 401, body: JSON.stringify({ ok: false, error: 'unauthorized' }) };
     }
 
@@ -86,10 +69,10 @@ exports.handler = async (event) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ok: true,
-        role: account.data.role,
-        username: account.data.username,
-        level: account.data.level || '',
-        scopeValue: account.data.scopeValue || ''
+        role: account.role,
+        username: account.username,
+        level: account.level || '',
+        scopeValue: account.scopeValue || ''
       })
     };
   } catch (err) {

@@ -5,10 +5,20 @@
 // Auth modes:
 //  1) Super admin: header X-Admin-Password === ADMIN_PASSWORD, no X-Admin-Username.
 //  2) Support admin (district/region/country level): X-Admin-Username + X-Admin-Password
-//     matching a record stored in the "happysolar50k_admins" form, with role !== 'sale'.
+//     matching an account stored in Netlify Blobs, with role !== 'sale'.
 //     Sale-role accounts are rejected here — they use admin-sale-stats.js instead.
 
 const crypto = require('crypto');
+const { getStore } = require('@netlify/blobs');
+
+const STORE_NAME = 'happysolar-admins';
+const KEY = 'accounts';
+
+async function loadAccounts() {
+  const store = getStore(STORE_NAME);
+  const list = await store.get(KEY, { type: 'json' });
+  return Array.isArray(list) ? list : [];
+}
 
 async function fetchFormSubmissions(siteId, apiToken, formName) {
   const formsRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}/forms`, {
@@ -69,17 +79,14 @@ exports.handler = async (event) => {
         authedRole = 'super';
       }
     } else {
-      if (!apiToken || !siteId) {
-        return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'missing NETLIFY_API_TOKEN or NETLIFY_SITE_ID' }) };
-      }
-      const accountsResult = await fetchFormSubmissions(siteId, apiToken, 'happysolar50k_admins');
-      const account = accountsResult.submissions.find(
-        s => (s.data.username || '').toLowerCase() === givenUsername.toLowerCase()
+      const accounts = await loadAccounts();
+      const account = accounts.find(
+        a => (a.username || '').toLowerCase() === givenUsername.toLowerCase()
       );
-      if (account && account.data.role !== 'sale' && verifyPassword(givenPassword, account.data.salt, account.data.passwordHash)) {
-        authedRole = account.data.role;
-        authedLevel = account.data.level || '';
-        authedScope = account.data.scopeValue || '';
+      if (account && account.role !== 'sale' && verifyPassword(givenPassword, account.salt, account.passwordHash)) {
+        authedRole = account.role;
+        authedLevel = account.level || '';
+        authedScope = account.scopeValue || '';
       }
     }
 

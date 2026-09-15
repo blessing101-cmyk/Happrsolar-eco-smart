@@ -3,53 +3,33 @@
 // can NEVER create 'support' or 'super' accounts, so it's safe to expose
 // without a password. Sale accounts only get their own referral link + stats
 // (admin-sale-stats.js) — they cannot see other customers' data or approve leads.
+//
+// Accounts are stored in Netlify Blobs (zero-config) — same store used by
+// admin-accounts.js, admin-login.js, admin-leads.js and admin-sale-stats.js.
 
 const crypto = require('crypto');
+const { getStore } = require('@netlify/blobs');
 
-async function fetchFormSubmissions(siteId, apiToken, formName) {
-  const formsRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}/forms`, {
-    headers: { Authorization: 'Bearer ' + apiToken }
-  });
-  if (!formsRes.ok) {
-    const errText = await formsRes.text();
-    throw new Error('forms lookup failed: ' + errText);
-  }
-  const forms = await formsRes.json();
-  const form = Array.isArray(forms) ? forms.find(f => f.name === formName) : null;
-  if (!form) return { submissions: [], found: false };
+const STORE_NAME = 'happysolar-admins';
+const KEY = 'accounts';
 
-  const subsRes = await fetch(`https://api.netlify.com/api/v1/forms/${form.id}/submissions`, {
-    headers: { Authorization: 'Bearer ' + apiToken }
-  });
-  if (!subsRes.ok) {
-    const errText = await subsRes.text();
-    throw new Error('submissions lookup failed for ' + formName + ': ' + errText);
-  }
-  const subs = await subsRes.json();
-  return {
-    submissions: (Array.isArray(subs) ? subs : []).map(s => ({ id: s.id, created_at: s.created_at, data: s.data || {} })),
-    found: true
-  };
+function getAccountsStore() {
+  return getStore(STORE_NAME);
+}
+
+async function loadAccounts() {
+  const store = getAccountsStore();
+  const list = await store.get(KEY, { type: 'json' });
+  return Array.isArray(list) ? list : [];
+}
+
+async function saveAccounts(list) {
+  const store = getAccountsStore();
+  await store.setJSON(KEY, list);
 }
 
 function hashPassword(password, salt) {
   return crypto.scryptSync(password, salt, 64).toString('hex');
-}
-
-async function submitToForm(siteUrl, formName, fields) {
-  const payload = Object.assign({ 'form-name': formName }, fields);
-  const body = Object.keys(payload)
-    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(payload[k] == null ? '' : payload[k]))
-    .join('&');
-  const res = await fetch(siteUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body
-  });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error('form submit failed: ' + t);
-  }
 }
 
 // Only allow safe characters in a username so it works cleanly as a ?ref= URL param
@@ -80,32 +60,21 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ ok: false, error: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' }) };
     }
 
-    const apiToken = process.env.NETLIFY_API_TOKEN;
-    const siteId = process.env.NETLIFY_SITE_ID;
-    // Fall back to the known production URL — process.env.URL / DEPLOY_URL are
-    // not always populated inside Netlify Functions at runtime.
-    const siteUrl = process.env.URL || process.env.DEPLOY_URL || 'https://happysolar.netlify.app';
-    if (!apiToken || !siteId) {
-      return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'server not configured' }) };
-    }
-
-    const existing = await fetchFormSubmissions(siteId, apiToken, 'happysolar50k_admins');
-    const dup = existing.submissions.find(s => (s.data.username || '').toLowerCase() === username.toLowerCase());
+    const accounts = await loadAccounts();
+    const dup = accounts.find(a => (a.username || '').toLowerCase() === username.toLowerCase());
     if (dup) {
       return { statusCode: 409, body: JSON.stringify({ ok: false, error: 'username นี้มีคนใช้แล้ว กรุณาเลือกชื่ออื่น' }) };
     }
 
     const salt = crypto.randomBytes(16).toString('hex');
     const passwordHash = hashPassword(password, salt);
-
-    await submitToForm(siteUrl, 'happysolar50k_admins', {
-      username,
-      passwordHash,
-      salt,
-      role: 'sale',
-      level: '',
-      scopeValue: ''
+    accounts.push({
+      id: crypto.randomUUID(),
+      username, passwordHash, salt,
+      role: 'sale', level: '', scopeValue: '',
+      createdAt: new Date().toISOString()
     });
+    await saveAccounts(accounts);
 
     return {
       statusCode: 200,

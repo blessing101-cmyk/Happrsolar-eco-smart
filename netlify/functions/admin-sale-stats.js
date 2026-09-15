@@ -1,6 +1,6 @@
 // Endpoint for "sale" role accounts — no lead-management access, just their own
 // referral stats. Auth via headers X-Admin-Username + X-Admin-Password, must be
-// an account with role === 'sale' stored in the "happysolar50k_admins" form.
+// an account with role === 'sale' stored in Netlify Blobs.
 //
 // Points are awarded only for leads where:
 //   - lead.data.ref === this account's username (they came from this sale's link)
@@ -9,6 +9,16 @@
 // so it can never drift out of sync.
 
 const crypto = require('crypto');
+const { getStore } = require('@netlify/blobs');
+
+const STORE_NAME = 'happysolar-admins';
+const KEY = 'accounts';
+
+async function loadAccounts() {
+  const store = getStore(STORE_NAME);
+  const list = await store.get(KEY, { type: 'json' });
+  return Array.isArray(list) ? list : [];
+}
 
 async function fetchFormSubmissions(siteId, apiToken, formName) {
   const formsRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}/forms`, {
@@ -49,18 +59,18 @@ exports.handler = async (event) => {
       return { statusCode: 401, body: JSON.stringify({ ok: false, error: 'unauthorized' }) };
     }
 
+    const accounts = await loadAccounts();
+    const account = accounts.find(
+      a => (a.username || '').toLowerCase() === username.toLowerCase()
+    );
+    if (!account || account.role !== 'sale' || !verifyPassword(password, account.salt, account.passwordHash)) {
+      return { statusCode: 401, body: JSON.stringify({ ok: false, error: 'unauthorized' }) };
+    }
+
     const apiToken = process.env.NETLIFY_API_TOKEN;
     const siteId = process.env.NETLIFY_SITE_ID;
     if (!apiToken || !siteId) {
       return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'server not configured' }) };
-    }
-
-    const accountsResult = await fetchFormSubmissions(siteId, apiToken, 'happysolar50k_admins');
-    const account = accountsResult.submissions.find(
-      s => (s.data.username || '').toLowerCase() === username.toLowerCase()
-    );
-    if (!account || account.data.role !== 'sale' || !verifyPassword(password, account.data.salt, account.data.passwordHash)) {
-      return { statusCode: 401, body: JSON.stringify({ ok: false, error: 'unauthorized' }) };
     }
 
     const leadsResult = await fetchFormSubmissions(siteId, apiToken, 'happysolar50k');
