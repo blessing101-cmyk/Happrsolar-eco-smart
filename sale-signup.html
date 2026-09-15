@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAPPYSOLAR — สมัครเป็นผู้แนะนำ (Sale)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16241C;
+  --paper:#FBF9F4;
+  --paper-2:#F1EEE4;
+  --gold:#E8A93D;
+  --energy:#C6631B;
+  --green:#1F7A4D;
+  --green-deep:#123D28;
+  --line:#E2DCCB;
+  --muted:#6B7568;
+  --white:#FFFFFF;
+  --red:#B23A2E;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Noto Sans Thai','Inter',sans-serif;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:420px;margin:0 auto;padding:32px 20px 60px;}
+.brand{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:24px;}
+.brand-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;}
+h1{font-family:'Space Grotesk',sans-serif;font-size:19px;margin:0 0 6px;text-align:center;}
+.sub{font-size:13px;color:var(--muted);text-align:center;margin:0 0 26px;line-height:1.6;}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px 20px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+.field input{
+  width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;
+  font-size:14.5px;background:var(--paper);color:var(--ink);
+}
+.field input:focus{outline:none;border-color:var(--green);}
+.field-hint{font-size:11.5px;color:var(--muted);margin-top:5px;}
+.pw-field{position:relative;}
+.pw-field button{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  width:32px;height:32px;border:none;background:transparent;font-size:16px;cursor:pointer;opacity:.6;
+}
+.btn-primary{
+  width:100%;padding:14px;border:none;border-radius:10px;
+  background:var(--energy);color:#fff;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px;
+}
+.btn-primary:disabled{opacity:.6;}
+.err-msg{color:var(--red);font-size:12.5px;margin-top:10px;display:none;}
+.hidden{display:none !important;}
+
+/* ===== SUCCESS ===== */
+.success-icon{font-size:44px;text-align:center;margin-bottom:8px;}
+.ref-link-box{
+  display:flex;gap:8px;align-items:center;background:var(--paper-2);border-radius:10px;
+  padding:12px 14px;margin:16px 0;word-break:break-all;font-size:12.5px;
+}
+.ref-link-box code{flex:1;}
+.btn-copy{
+  padding:8px 14px;border-radius:8px;border:1.5px solid var(--green-deep);
+  background:var(--white);color:var(--green-deep);font-weight:700;font-size:12.5px;cursor:pointer;flex-shrink:0;
+}
+.note-box{
+  font-size:12.5px;color:var(--muted);background:var(--paper-2);border-left:3px solid var(--gold);
+  border-radius:8px;padding:12px 14px;margin-top:16px;line-height:1.6;
+}
+.login-hint{text-align:center;margin-top:20px;font-size:12.5px;}
+.login-hint a{color:var(--green-deep);font-weight:600;text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <span style="font-size:22px;">☀️</span>
+    <span class="brand-name">HAPPYSOLAR</span>
+  </div>
+
+  <div id="view-signup">
+    <h1>สมัครเป็นผู้แนะนำ (Sale)</h1>
+    <p class="sub">สมัครเสร็จรับลิงก์ส่วนตัวทันที ส่งให้ลูกค้าแล้วรับคะแนนสะสมเมื่อลูกค้าผ่านการอนุมัติ</p>
+    <div class="card">
+      <div class="field">
+        <label>ตั้งชื่อผู้ใช้ (Username)</label>
+        <input type="text" id="su-username" placeholder="เช่น somchai01" autocomplete="off">
+        <div class="field-hint">ใช้ตัวอักษร a-z, ตัวเลข, _ . - เท่านั้น (3-32 ตัวอักษร) — ชื่อนี้จะอยู่ในลิงก์ของคุณ</div>
+      </div>
+      <div class="field">
+        <label>ตั้งรหัสผ่าน</label>
+        <div class="pw-field">
+          <input type="password" id="su-password" placeholder="อย่างน้อย 6 ตัวอักษร">
+          <button type="button" id="toggle-pw1">👁️</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>ยืนยันรหัสผ่านอีกครั้ง</label>
+        <div class="pw-field">
+          <input type="password" id="su-password2" placeholder="พิมพ์รหัสผ่านซ้ำ">
+          <button type="button" id="toggle-pw2">👁️</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-signup">สมัครและรับลิงก์ของฉัน</button>
+      <div class="err-msg" id="err-msg"></div>
+    </div>
+    <div class="login-hint">เคยสมัครแล้ว? <a href="/admin.html">เข้าสู่ระบบที่นี่</a></div>
+  </div>
+
+  <div id="view-success" class="hidden">
+    <div class="success-icon">🎉</div>
+    <h1>สมัครสำเร็จแล้ว!</h1>
+    <p class="sub">นี่คือลิงก์ส่วนตัวของคุณ — ส่งให้ลูกค้าได้เลย</p>
+    <div class="card">
+      <div class="ref-link-box">
+        <code id="ref-link-text">-</code>
+        <button class="btn-copy" id="btn-copy-ref">คัดลอก</button>
+      </div>
+      <div class="note-box">
+        เมื่อลูกค้าที่คลิกลิงก์นี้ลงทะเบียนและ<strong>ผ่านการอนุมัติระดับประเทศ</strong>แล้ว คุณจะได้คะแนนสะสม +1 โดยอัตโนมัติ
+      </div>
+    </div>
+    <div class="login-hint">
+      ดูสถิติ/คะแนนสะสมของคุณได้ที่ <a href="/admin.html">หน้าเข้าสู่ระบบ</a><br>
+      (ใส่ username และรหัสผ่านที่เพิ่งตั้งไว้)
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  function togglePw(inputId, btnId){
+    const input = $(inputId), btn = $(btnId);
+    btn.addEventListener('click', ()=>{
+      if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈'; }
+      else { input.type = 'password'; btn.textContent = '👁️'; }
+    });
+  }
+  togglePw('su-password','toggle-pw1');
+  togglePw('su-password2','toggle-pw2');
+
+  $('btn-signup').addEventListener('click', async ()=>{
+    const username = $('su-username').value.trim();
+    const password = $('su-password').value;
+    const password2 = $('su-password2').value;
+    const err = $('err-msg');
+    err.style.display = 'none';
+
+    if(!/^[a-zA-Z0-9_.-]{3,32}$/.test(username)){
+      err.textContent = 'Username ต้องเป็น a-z, 0-9, _ . - เท่านั้น (3-32 ตัวอักษร)';
+      err.style.display = 'block';
+      return;
+    }
+    if(password.length < 6){
+      err.textContent = 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+      err.style.display = 'block';
+      return;
+    }
+    if(password !== password2){
+      err.textContent = 'รหัสผ่านทั้งสองช่องไม่ตรงกัน';
+      err.style.display = 'block';
+      return;
+    }
+
+    $('btn-signup').disabled = true;
+    $('btn-signup').textContent = 'กำลังสมัคร...';
+
+    try{
+      const res = await fetch('/.netlify/functions/sale-signup', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      const json = await res.json();
+      if(!res.ok || !json.ok){
+        throw new Error(json.error || 'สมัครไม่สำเร็จ');
+      }
+      const link = location.origin + '/50000.html?ref=' + encodeURIComponent(json.username);
+      $('ref-link-text').textContent = link;
+      $('view-signup').classList.add('hidden');
+      $('view-success').classList.remove('hidden');
+    }catch(e){
+      err.textContent = e.message;
+      err.style.display = 'block';
+      $('btn-signup').disabled = false;
+      $('btn-signup').textContent = 'สมัครและรับลิงก์ของฉัน';
+    }
+  });
+
+  $('btn-copy-ref').addEventListener('click', ()=>{
+    const text = $('ref-link-text').textContent;
+    navigator.clipboard.writeText(text).then(()=>{
+      $('btn-copy-ref').textContent = 'คัดลอกแล้ว ✓';
+      setTimeout(()=>{ $('btn-copy-ref').textContent = 'คัดลอก'; }, 1500);
+    }).catch(()=>{ alert('คัดลอกไม่สำเร็จ กรุณาคัดลอกด้วยตนเอง'); });
+  });
+})();
+</script>
+</body>
+</html>
