@@ -1974,7 +1974,7 @@
   }).then(function(r){ return r.json(); }).then(function(d){
     if(!d || !d.ok) return;
     sessionStorage.setItem(seenKey, '1');
-    = '👀 เข้าชมแล้ว ' + (d.visitsIndex||0) + ' ครั้ง';
+    
   }).catch(function(){});
 })();
 </script>
