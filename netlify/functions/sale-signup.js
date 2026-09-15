@@ -82,8 +82,10 @@ exports.handler = async (event) => {
 
     const apiToken = process.env.NETLIFY_API_TOKEN;
     const siteId = process.env.NETLIFY_SITE_ID;
-    const siteUrl = process.env.URL || process.env.DEPLOY_URL;
-    if (!apiToken || !siteId || !siteUrl) {
+    // Fall back to the known production URL — process.env.URL / DEPLOY_URL are
+    // not always populated inside Netlify Functions at runtime.
+    const siteUrl = process.env.URL || process.env.DEPLOY_URL || 'https://happysolar.netlify.app';
+    if (!apiToken || !siteId) {
       return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'server not configured' }) };
     }
 
