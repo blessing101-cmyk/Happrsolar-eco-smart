@@ -231,6 +231,7 @@ tr:last-child td{border-bottom:none;}
         <div class="stat-card"><div class="n" id="stat-total">0</div><div class="l">ผู้ลงทะเบียนทั้งหมด</div></div>
         <div class="stat-card"><div class="n" id="stat-today">0</div><div class="l">วันนี้</div></div>
         <div class="stat-card"><div class="n" id="stat-week">0</div><div class="l">7 วันล่าสุด</div></div>
+        <div class="stat-card"><div class="n" id="stat-visits-total">0</div><div class="l">ยอดเข้าชมเว็บ</div></div>
       </div>
       <span class="who-badge" id="main-who"></span>
     </div>
@@ -450,6 +451,7 @@ tr:last-child td{border-bottom:none;}
         }
       }
       fetchLeads();
+      fetchSiteStats();
     }
   }
 
@@ -474,6 +476,19 @@ tr:last-child td{border-bottom:none;}
       }
     }catch(e){}
   })();
+
+  /* ===================== SITE VISIT STATS ===================== */
+
+  async function fetchSiteStats(){
+    try{
+      const res = await fetch('/.netlify/functions/track-stats');
+      const json = await res.json();
+      if(!json || !json.ok) return;
+      const total = (json.visitsIndex||0) + (json.visits50000||0);
+      const el = $('stat-visits-total');
+      if(el) el.textContent = total;
+    }catch(e){}
+  }
 
   /* ===================== LEADS DASHBOARD ===================== */
 
