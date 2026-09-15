@@ -18,7 +18,7 @@ const STORE_NAME = 'happysolar-admins';
 const KEY = 'accounts';
 
 function getAccountsStore() {
-  return getStore(STORE_NAME);
+  return getStore({ name: STORE_NAME, siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_API_TOKEN });
 }
 
 async function loadAccounts() {

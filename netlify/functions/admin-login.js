@@ -13,7 +13,7 @@ const STORE_NAME = 'happysolar-admins';
 const KEY = 'accounts';
 
 async function loadAccounts() {
-  const store = getStore(STORE_NAME);
+  const store = getStore({ name: STORE_NAME, siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_API_TOKEN });
   const list = await store.get(KEY, { type: 'json' });
   return Array.isArray(list) ? list : [];
 }
