@@ -1309,9 +1309,18 @@
       });
       const data = await res.json();
       const addr = data.address || {};
-      const province = addr.state || addr.province || '';
-      const amphoe = addr.county || addr.city || addr.town || addr.district || '';
-      const tambon = addr.suburb || addr.village || addr.subdistrict || addr.city_district || addr.neighbourhood || '';
+      let province, amphoe, tambon;
+      if(addr.state){
+        // จังหวัดทั่วไป
+        province = addr.state;
+        amphoe = addr.county || addr.town || addr.district || '';
+        tambon = addr.suburb || addr.village || addr.subdistrict || addr.neighbourhood || '';
+      } else {
+        // กรุงเทพมหานคร: ไม่มี state, ใช้ city แทนระดับจังหวัด
+        province = addr.city || addr.province || '';
+        amphoe = addr.suburb || addr.city_district || addr.county || '';
+        tambon = addr.neighbourhood || addr.quarter || addr.village || '';
+        }
 
       if(province){ formData.province = province; const el = document.getElementById('f-province'); if(el) el.value = province; }
       if(amphoe){ formData.amphoe = amphoe; const el = document.getElementById('f-amphoe'); if(el) el.value = amphoe; }
