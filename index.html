@@ -1963,6 +1963,21 @@
   <a href="/sale-signup.html" style="background:#C6631B;color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:6px 10px;border-radius:8px;">💼 สมัคร Sale</a>
 </div>
 <a href="https://line.me/R/ti/p/@224jrjso" target="_blank" rel="noopener" style="position:fixed;bottom:16px;right:16px;z-index:999;background:#06C755;color:#fff;text-decoration:none;font-size:13px;font-weight:700;padding:12px 16px;border-radius:30px;box-shadow:0 6px 16px rgba(0,0,0,.25);display:flex;align-items:center;gap:6px;">💬 แอด LINE</a>
-</body>
+</body><script>
+(function(){
+  var TYPE = 'visit_index';
+  var seenKey = 'hs_seen_' + TYPE;
+  fetch('/.netlify/functions/track-stats', {
+    method: sessionStorage.getItem(seenKey) ? 'GET' : 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: sessionStorage.getItem(seenKey) ? undefined : JSON.stringify({type: TYPE})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(!d || !d.ok) return;
+    sessionStorage.setItem(seenKey, '1');
+    var v = document.getElementById('stat-visits');
+    if(v) v.textContent = '👀 เข้าชมแล้ว ' + (d.visitsIndex||0) + ' ครั้ง';
+  }).catch(function(){});
+})();
+</script>
 </html>
   
