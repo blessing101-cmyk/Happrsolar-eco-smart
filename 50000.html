@@ -1609,5 +1609,18 @@
   <a href="/admin.html" style="background:#123D28;color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:6px 10px;border-radius:8px;">🔑 Admin</a>
   <a href="/sale-signup.html" style="background:#C6631B;color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:6px 10px;border-radius:8px;">💼 สมัคร Sale</a>
 </div>
-</body>
+</body><script>
+(function(){
+  var TYPE = 'visit_50000';
+  var seenKey = 'hs_seen_' + TYPE;
+  fetch('/.netlify/functions/track-stats', {
+    method: sessionStorage.getItem(seenKey) ? 'GET' : 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: sessionStorage.getItem(seenKey) ? undefined : JSON.stringify({type: TYPE})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(!d || !d.ok) return;
+    sessionStorage.setItem(seenKey, '1');
+  }).catch(function(){});
+})();
+</script>
 </html>
