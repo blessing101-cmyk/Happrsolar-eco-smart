@@ -1453,7 +1453,7 @@
   // ============ SUBMIT / STORAGE ============
   const urlRef = new URLSearchParams(location.search).get('ref');
   if(urlRef){ sessionStorage.setItem('happysolar50k_ref', urlRef); }
-  const REF_CODE = urlRef || sessionStorage.getItem('happysolar50k_ref') || '';
+  const REF_CODE = urlRef || sessionStorage.getItem('happysolar50k_ref') || '01';
 
   function genAppId(){
     const d = new Date();
