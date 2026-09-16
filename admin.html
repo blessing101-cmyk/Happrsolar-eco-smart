@@ -281,6 +281,7 @@ tr:last-child td{border-bottom:none;}
               <th>แผนที่</th>
               <th>ผู้แนะนำ</th>
               <th>ชำระเงิน</th>
+              <th>ติดต่อ</th>
               <th>อนุมัติ</th>
             </tr>
           </thead>
@@ -562,6 +563,23 @@ tr:last-child td{border-bottom:none;}
   }
   window.approveLead = approveLead;
 
+  window.replyLine = function(phone){
+    if(!phone){ alert('ไม่มีเบอร์โทรของลูกค้ารายนี้'); return; }
+    const message = prompt('พิมพ์ข้อความที่จะส่งหาลูกค้าเบอร์ ' + phone + ' ทาง LINE:');
+    if(!message) return;
+    fetch('/.netlify/functions/line-reply', {
+      method: 'POST',
+      headers: Object.assign({'Content-Type':'application/json'}, authHeaders()),
+      body: JSON.stringify({ phone, message })
+    }).then(res=>res.json()).then(json=>{
+      if(json.ok){
+        alert('ส่งข้อความสำเร็จ ✅');
+      } else {
+        alert('ส่งไม่สำเร็จ: ' + (json.error || 'ไม่ทราบสาเหตุ'));
+      }
+    }).catch(()=> alert('ส่งไม่สำเร็จ ลองใหม่อีกครั้ง'));
+  };
+
   function renderTable(list){
     const tbody = $('leads-tbody');
     if(!list.length){
@@ -597,6 +615,7 @@ tr:last-child td{border-bottom:none;}
         <td>${(d.lat && d.lng) ? `<a href="https://www.google.com/maps?q=${d.lat},${d.lng}" target="_blank" rel="noopener">📍 เปิดแผนที่</a>` : '-'}</td>
         <td>${escapeHtml(d.ref||'-')}</td>
         <td>${escapeHtml(PAYMENT_LABELS[d.paymenttype] || d.paymenttype || '-')}</td>
+        <td><button type="button" class="btn small primary" onclick="replyLine('${escapeHtml(d.phone||'')}')">📩 LINE</button></td>
         <td class="approve-cell">
           ${approveBtn('district','เขต')}
           ${approveBtn('region','ภาค')}
