@@ -280,6 +280,7 @@ tr:last-child td{border-bottom:none;}
               <th>ความสนใจ</th>
               <th>แผนที่</th>
               <th>ผู้แนะนำ</th>
+              <th>ชำระเงิน</th>
               <th>อนุมัติ</th>
             </tr>
           </thead>
@@ -334,6 +335,7 @@ tr:last-child td{border-bottom:none;}
 
   const TYPE_LABELS = {home:'บ้านอยู่อาศัย',farmer:'เกษตรกร',shop:'ร้านค้า',biz:'ธุรกิจ',other:'อื่นๆ'};
   const BILL_LABELS = {'1':'< 1,500 บาท','2':'1,500-3,000 บาท','3':'3,000-5,000 บาท','4':'5,000-10,000 บาท','5':'> 10,000 บาท'};
+  const PAYMENT_LABELS = {cash:'💵 ซื้อสด', installment:'📆 ผ่อนชำระ', unsure:'🤔 ยังไม่แน่ใจ'};
   const LEVEL_LABELS = {district:'เขต/อำเภอ', region:'ภาค', country:'ประเทศ'};
 
   const PROVINCE_REGION = {
@@ -594,6 +596,7 @@ tr:last-child td{border-bottom:none;}
         <td>${escapeHtml(d.purpose||'-')}</td>
         <td>${(d.lat && d.lng) ? `<a href="https://www.google.com/maps?q=${d.lat},${d.lng}" target="_blank" rel="noopener">📍 เปิดแผนที่</a>` : '-'}</td>
         <td>${escapeHtml(d.ref||'-')}</td>
+        <td>${escapeHtml(PAYMENT_LABELS[d.paymenttype] || d.paymenttype || '-')}</td>
         <td class="approve-cell">
           ${approveBtn('district','เขต')}
           ${approveBtn('region','ภาค')}
@@ -633,7 +636,7 @@ tr:last-child td{border-bottom:none;}
   $('search-box').addEventListener('input', applyFilters);
   $('btn-refresh').addEventListener('click', fetchLeads);
   $('btn-export').addEventListener('click', ()=>{
-    const rows = [['วันที่','เลขคำขอ','ชื่อ','เบอร์โทร','LINE ID','Email','จังหวัด','ภาค','อำเภอ','ตำบล','ประเภท','ประเภทบ้าน','ค่าไฟ','ความสนใจ','ช่องทางติดต่อ','ผู้แนะนำ','ลิงก์แผนที่']];
+    const rows = [['วันที่','เลขคำขอ','ชื่อ','เบอร์โทร','LINE ID','Email','จังหวัด','ภาค','อำเภอ','ตำบล','ประเภท','ประเภทบ้าน','ค่าไฟ','ความสนใจ','ช่องทางติดต่อ','ผู้แนะนำ','การชำระเงิน','ลิงก์แผนที่']];
     allLeads.forEach(l=>{
       const d = l.data || {};
       const mapLink = (d.lat && d.lng) ? ('https://www.google.com/maps?q='+d.lat+','+d.lng) : '';
@@ -642,7 +645,7 @@ tr:last-child td{border-bottom:none;}
         d.appId||'', d.name||'', d.phone||'', d.lineid||'', d.email||'',
         d.province||'', provinceToRegion(d.province), d.amphoe||'', d.tambon||'',
         TYPE_LABELS[d.usertype]||d.usertype||'', d.housetype||'',
-        BILL_LABELS[d.bill]||'', d.purpose||'', d.contactpref||'', d.ref||'', mapLink
+        BILL_LABELS[d.bill]||'', d.purpose||'', d.contactpref||'', d.ref||'', (PAYMENT_LABELS[d.paymenttype]||d.paymenttype||''), mapLink
       ]);
     });
     const csv = rows.map(r=> r.map(cell=>'"'+String(cell).replace(/"/g,'""')+'"').join(',')).join('\n');

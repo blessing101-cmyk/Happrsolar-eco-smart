@@ -457,6 +457,7 @@
   <input type="text" name="contactpref" />
   <input type="text" name="baac" />
   <input type="text" name="watt" />
+  <input type="text" name="paymenttype" />
   <textarea name="bot-field"></textarea>
 </form>
 <div class="app" id="app">
@@ -738,6 +739,10 @@
       opt_p3: "🔋 สำรองไฟ",
       opt_p4: "🌱 ใช้พลังงานสะอาด",
       opt_p5: "📈 ลดค่าใช้จ่ายระยะยาว",
+      q_paymenttype: "สนใจติดตั้งแบบซื้อสดหรือผ่อนชำระ",
+      opt_cash: "💵 ซื้อสด",
+      opt_installment: "📆 ผ่อนชำระ",
+      opt_pt_unsure: "🤔 ยังไม่แน่ใจ",
       step4_title: "ข้อมูลผู้สมัคร",
       step4_sub: "04 — ติดต่อ",
       f_name: "ชื่อ-นามสกุล",
@@ -878,6 +883,10 @@
       opt_p3: "🔋 Backup power",
       opt_p4: "🌱 Use clean energy",
       opt_p5: "📈 Save money long-term",
+      q_paymenttype: "Interested in installing via cash purchase or installment",
+      opt_cash: "💵 Cash purchase",
+      opt_installment: "📆 Installment",
+      opt_pt_unsure: "🤔 Not sure yet",
       step4_title: "Your contact details",
       step4_sub: "04 — Contact",
       f_name: "Full name",
@@ -1018,6 +1027,10 @@
       opt_p3: "🔋 备用电源",
       opt_p4: "🌱 使用清洁能源",
       opt_p5: "📈 长期节省开支",
+      q_paymenttype: "有意采用现金购买还是分期付款安装",
+      opt_cash: "💵 现金购买",
+      opt_installment: "📆 分期付款",
+      opt_pt_unsure: "🤔 还不确定",
       step4_title: "申请人信息",
       step4_sub: "04 — 联系方式",
       f_name: "姓名",
@@ -1236,6 +1249,11 @@
       html += optCardHTML('purpose','clean',t('opt_p4'),true);
       html += optCardHTML('purpose','longterm',t('opt_p5'),true);
       html += `</div></div>`;
+      html += `<div class="field"><label>${t('q_paymenttype')}</label><div class="opt-group">`;
+      html += optCardHTML('paymenttype','cash',t('opt_cash'),false);
+      html += optCardHTML('paymenttype','installment',t('opt_installment'),false);
+      html += optCardHTML('paymenttype','unsure',t('opt_pt_unsure'),false);
+      html += `</div></div>`;
     }
 
     else if(wizardStep === 3){
@@ -1412,7 +1430,7 @@
   function validateStep(){
     if(wizardStep === 0) return !!formData.usertype && !!formData.baac;
     if(wizardStep === 1) return !!(formData.province && formData.housetype && formData.installarea && formData.meter && formData.watt);
-    if(wizardStep === 2) return !!formData.bill;
+    if(wizardStep === 2) return !!formData.bill && !!formData.paymenttype;
     if(wizardStep === 3) return !!(formData.name && formData.phone && formData.contactpref);
     if(wizardStep === 4) return !!(formData.consent1 && formData.consent2 && formData.consent3);
     return true;
@@ -1471,6 +1489,7 @@
       watt: formData.watt || '',
       bill: formData.bill || '',
       purpose: (formData.purpose||[]).join(', '),
+      paymenttype: formData.paymenttype || '',
       contactpref: formData.contactpref || '',
       baac: formData.baac || '',
       lat: formData.lat || '',
@@ -1496,7 +1515,8 @@
       'เบอร์โทร: ' + (formData.phone || '-'),
       'ประเภท: ' + (typeMap[formData.usertype] || formData.usertype || '-'),
       'จังหวัด: ' + (formData.province || '-'),
-      'ค่าไฟ: ' + (billMap[formData.bill] || '-')
+      'ค่าไฟ: ' + (billMap[formData.bill] || '-'),
+      'ชำระเงิน: ' + ({cash:'ซื้อสด',installment:'ผ่อนชำระ',unsure:'ยังไม่แน่ใจ'}[formData.paymenttype] || '-')
     ];
     if(formData.watt){
       lines.push('ขนาดที่ต้องการ: ' + formData.watt + ' วัตต์');
@@ -1609,18 +1629,5 @@
   <a href="/admin.html" style="background:#123D28;color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:6px 10px;border-radius:8px;">🔑 Admin</a>
   <a href="/sale-signup.html" style="background:#C6631B;color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:6px 10px;border-radius:8px;">💼 สมัครแนะนำ</a>
 </div>
-</body><script>
-(function(){
-  var TYPE = 'visit_50000';
-  var seenKey = 'hs_seen_' + TYPE;
-  fetch('/.netlify/functions/track-stats', {
-    method: sessionStorage.getItem(seenKey) ? 'GET' : 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: sessionStorage.getItem(seenKey) ? undefined : JSON.stringify({type: TYPE})
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if(!d || !d.ok) return;
-    sessionStorage.setItem(seenKey, '1');
-  }).catch(function(){});
-})();
-</script>
+</body>
 </html>
