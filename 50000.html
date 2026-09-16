@@ -572,6 +572,7 @@
       <h2 data-i18n="success_title"></h2>
       <p class="hero-desc" data-i18n="success_desc" style="margin-top:8px;"></p>
       <p class="hero-desc" data-i18n="line_link_hint" style="margin-top:10px;"></p>
+      <a id="btn-line-connect" class="btn-primary" style="display:block;text-decoration:none;text-align:center;margin-top:10px;" target="_blank" rel="noopener" data-i18n="cta_line_connect"></a>
     </div>
     <div class="app-id-card">
       <div class="app-id-label" data-i18n="app_id_label"></div>
@@ -771,7 +772,8 @@
       err_required: "กรุณากรอก/เลือกข้อมูลนี้ก่อนไปต่อ",
       success_title: "ลงทะเบียนเรียบร้อยแล้ว",
       success_desc: "ทีมงาน HAPPYSOLAR ได้รับข้อมูลของคุณแล้ว และจะติดต่อกลับเพื่อช่วยดำเนินการต่อให้",
-      line_link_hint: "💬 แอดไลน์ HAPPYSOLAR แล้วพิมพ์เบอร์โทรศัพท์ที่ใช้ลงทะเบียน ส่งเข้าแชท เพื่อให้เจ้าหน้าที่ทักกลับหาคุณทาง LINE ได้เร็วขึ้น",
+      line_link_hint: "💬 กดปุ่มด้านล่างเพื่อแอดไลน์ HAPPYSOLAR แล้วกดส่งข้อความที่เตรียมไว้ให้ (มีเบอร์โทรของคุณอยู่แล้ว) เจ้าหน้าที่จะทักกลับหาคุณทาง LINE ได้เร็วขึ้น",
+      cta_line_connect: "💬 แอด LINE เพื่อให้เจ้าหน้าที่ติดต่อกลับ",
       app_id_label: "หมายเลขคำขอ (Application ID)",
       next_steps_title: "ขั้นตอนต่อไป",
       tl_received: "รับข้อมูลแล้ว",
@@ -916,7 +918,8 @@
       err_required: "Please fill in / select this before continuing",
       success_title: "Registration complete",
       success_desc: "The HAPPYSOLAR team has received your information and will contact you to help move things forward",
-      line_link_hint: "💬 Add HAPPYSOLAR on LINE and send us the phone number you registered with, so our staff can message you back faster.",
+      line_link_hint: "💬 Tap the button below to add HAPPYSOLAR on LINE and send the pre-filled message (with your phone number) so our staff can message you back faster.",
+      cta_line_connect: "💬 Add LINE for staff to contact you",
       app_id_label: "Application ID",
       next_steps_title: "What happens next",
       tl_received: "Information received",
@@ -1061,7 +1064,8 @@
       err_required: "请先填写/选择此项再继续",
       success_title: "登记成功",
       success_desc: "HAPPYSOLAR 团队已收到您的信息，将与您联系以协助推进后续事宜",
-      line_link_hint: "💬 添加 HAPPYSOLAR 的 LINE 好友，并发送您登记时使用的电话号码，工作人员可以更快地通过 LINE 联系您。",
+      line_link_hint: "💬 点击下方按钮添加 HAPPYSOLAR 的 LINE 好友，并发送已填好的消息（含您的电话号码），工作人员可以更快地通过 LINE 联系您。",
+      cta_line_connect: "💬 添加 LINE 以便工作人员联系您",
       app_id_label: "申请编号（Application ID）",
       next_steps_title: "接下来的步骤",
       tl_received: "已收到信息",
@@ -1571,6 +1575,8 @@
     sendLineNotification(appId);
 
     $('success-app-id').textContent = appId;
+    const linePrefill = (formData.phone || '').trim();
+    $('btn-line-connect').href = 'https://line.me/R/oaMessage/@224jrjso/?' + encodeURIComponent(linePrefill);
     showScreen('success');
   }
 
